@@ -1,0 +1,53 @@
+
+
+@media (max-width: 360px) {
+    header.large{
+        height: 100px;
+    }
+
+    header.large a img.logo{
+        width: 90px;
+        padding-left: 10px;
+        height: 80px;
+    }
+
+    header.large label{
+        font-size: 12px;
+        padding: 25px 100px;
+    }
+    header.large div.user_space{
+        margin: 20px 10px 0px 0px;
+        width: 100px;
+    }
+    header.large div.user_space img.user_avatar{
+        border-radius: 10px;
+        width: 15px;
+        height: 15px;
+    }
+
+    header.small{
+        height: 50px;
+    }
+
+    header.small a img.logo{
+        width: 40px;
+        padding-left: 5px;
+        height: 40px;
+    }
+
+    header.small label{
+        font-size: 10px;
+        padding: 20px 70px;
+    }
+
+    header.small div.user_space{
+        margin: 10px 10px 0px 0px;
+        width: 100px;
+    }
+    header.small div.user_space img.user_avatar{
+        border-radius: 10px;
+        width: 15px;
+        height: 15px;
+    }
+
+}

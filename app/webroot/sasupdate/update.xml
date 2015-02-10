@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updateInfo>
+    <appName>android-autoupdater</appName>
+    <appDescription>android autoupdater testa aplication</appDescription>
+    <packageName>cu.chendroid.sas</packageName>
+    <versionCode>5</versionCode>
+    <versionName>1.0.4</versionName>
+    <forceUpdate>false</forceUpdate>
+    <autoUpdate>false</autoUpdate>
+    <apkUrl>http://192.168.101.1:85/sas/sasupdate/sas-v1.0-release.apk</apkUrl>
+    <updateTips>
+        <default>Elementos interesantes</default>
+        <en>update tips</en>        
+    </updateTips>
+</updateInfo>
