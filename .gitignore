@@ -9,6 +9,8 @@
 /dist
 /tags
 *.mo
+/app/webroot/pool/
+/app/webroot/poolUpload/
 
 # IDE and editor specific files #
 #################################
