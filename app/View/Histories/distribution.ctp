@@ -4,11 +4,10 @@
 	<thead>
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
-			<th><?php echo $this->Paginator->sort('Nombre'); ?></th>
-			<th><?php echo $this->Paginator->sort('Area'); ?></th>
-            <th><?php echo $this->Paginator->sort('ip'); ?></th>
-			<th><?php echo $this->Paginator->sort('Cliente'); ?></th>
-            <th><?php echo $this->Paginator->sort('created'); ?></th>
+			<th><?php echo $this->Paginator->sort('name'); ?></th>
+			<th><?php echo $this->Paginator->sort('area'); ?></th>
+			<th><?php echo $this->Paginator->sort('client'); ?></th>
+			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -17,9 +16,12 @@
 		<td><?php echo h($history['History']['id']); ?>&nbsp;</td>
 		<td><?php echo h($history['History']['name']); ?>&nbsp;</td>
 		<td><?php echo h($history['History']['area']); ?>&nbsp;</td>
-        <td><?php echo h($history['History']['ip']); ?>&nbsp;</td>
 		<td><?php echo h($history['History']['client']); ?>&nbsp;</td>
-        <td><?php echo h($history['History']['created']); ?>&nbsp;</td>
+		<td class="actions">
+			<?php echo $this->Html->link(__('View'), array('action' => 'view', $history['History']['id'])); ?>
+			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $history['History']['id'])); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $history['History']['id']), array(), __('Are you sure you want to delete # %s?', $history['History']['id'])); ?>
+		</td>
 	</tr>
 <?php endforeach; ?>
 	</tbody>

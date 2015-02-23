@@ -276,6 +276,9 @@ class UploadsController extends AppController {
             $objFile = $_FILES["uploaded"];
             $name = basename( $objFile["name"] );
             $info = $this->apk_info($objFile["tmp_name"]);
+            // var_dump($objFile["tmp_name"]);
+            // var_dump($info);
+            // die();
             //Comprobar su ese apk para esa version ya esta arriba, si lo esta entonces no se sube
             $upl = $this->Upload->find('first',array('conditions'=>array('Upload.name'=>$info['id'], 'Upload.code'=>$info['code'])));
             //Comprobar que tampoco esta ni en application ni en version
@@ -347,7 +350,7 @@ class UploadsController extends AppController {
 //        var_dump($cats[0]['Application']["category"]);
         $this->set("categories", $cats);
 
-
+        
     }
     private function esWindow(){
         $cadenaparaWindow = "Win";

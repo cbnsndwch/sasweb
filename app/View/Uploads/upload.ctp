@@ -1,9 +1,6 @@
 <form  method="post" enctype="multipart/form-data">
 
     <select name="category" id="category">
-        <option value="">
-            Ninguna
-        </option>
         <?php
             foreach($categories as $c):?>
             <option value="<?php echo $c['Application']['category']; ?>" label="<?php echo $c['Application']['category']; ?>">
