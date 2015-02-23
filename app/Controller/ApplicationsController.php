@@ -64,12 +64,13 @@ class ApplicationsController extends AppController {
 
     public function repo($search = null) {
         $this->set('title_for_layout','Repositorio de aplicaciones');
+        $limit = 36;
 //        var_dump($_SERVER);
         //it1
         //aqui hay que verificar si se esta autenticado si es asi mostrar todas
         //si no se esta autenticado mostrar solo las validas
         $settings =array(
-            'limit'=>6,
+            'limit'=>$limit ,
             'order' => array(
                 'Application.label' => 'asc'
             ));
@@ -79,7 +80,7 @@ class ApplicationsController extends AppController {
         {
             if(!isset($this->Auth->user()['username'])){
                 $settings =array(
-                    'limit'=>6,
+                    'limit'=>$limit ,
                     //'conditions' => array('Apk.category is not null', 'Apk.category is not equal to \"Untrusted\"'),
                     'conditions' => array(
                         'Application.category is not null',
@@ -94,7 +95,7 @@ class ApplicationsController extends AppController {
                     ));
             }else{
                 $settings =array(
-                    'limit'=>6,
+                    'limit'=>$limit ,
                     //'conditions' => array('Apk.category is not null', 'Apk.category is not equal to \"Untrusted\"'),
                     'conditions' => array(
                         'OR' => array(
@@ -109,7 +110,7 @@ class ApplicationsController extends AppController {
         }else{
             if(!isset($this->Auth->user()['username'])){
                 $settings =array(
-                    'limit'=>6,
+                    'limit'=>$limit ,
                     'conditions' => array('Application.category is not null', 'Application.category <>' => 'Untrusted', 'Application.category <>' => 'Terceros'),
                     'order' => array(
                         'Application.label' => 'asc'

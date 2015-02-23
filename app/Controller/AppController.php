@@ -34,7 +34,7 @@ class AppController extends Controller {
 
     public $uses = array('User');
 //Descomentar esta linea cuando se monte el proyecto en produccion
-    public $layout = 'production';
+    //public $layout = 'production';
 
     public $components = array('Session',
         'Auth' => array(
