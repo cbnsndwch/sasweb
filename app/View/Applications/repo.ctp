@@ -38,19 +38,25 @@
     $this->end();
 ?>
 
-
-	<h2><?php echo __('Aplicaciones'); ?></h2>
-    <!--Aqui tengo que poner un buscador-->
-    <div class="search">
-          <input name="search" class="input-xlarge focused" id="search" value="<?php echo $search;?>" placeholder="<?php echo __('Introduzca una palabra clave para buscar');?>" />
-        <button class="btn btn-default" onclick="search();"><span class="glyphicon glyphicon-search"></span></button>
-    </div>
+    <div class="row-fluid">
+        <div class="col-lg-10">
+            <h2 class="page-header"><?php echo __('Aplicaciones'); ?></h2>
+        </div>
+   
+        <!--Aqui tengo que poner un buscador-->
+        <div class="col-lg-10">
+              <input name="search" class="input-xlarge focused" id="search" value="<?php echo $search;?>" placeholder="<?php echo __('Introduzca una palabra clave para buscar');?>" />
+            <button class="btn btn-default" onclick="search();"><span class="glyphicon glyphicon-search"></span></button>
+        </div>
+     </div>
     <div class="clearfix"></div>
+
+
     <div class="row-fluid">
 
-        <?php foreach ($apks as $apk): ?>
+        <?php $count = 0; foreach ($apks as $apk): ?>
 
-        <div class="span3 statboxsas blue nomargin" ondesktop="span3" ontablet="span6">
+        <div class="span3 statboxsas blue " <?php echo ($count==0)?"style='margin-left: 2.5641%;'":"";?> ondesktop="span3" ontablet="span6">
             <div class="title"> <?php echo h($apk['Application']['label']);?></div>
             <div class="avatar">
                 <a href="<?php echo $this->Html->url(array('controller' => 'Applications', 'action' => 'detail', $apk['Application']['id']))?>">
