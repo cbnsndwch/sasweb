@@ -1,8 +1,4 @@
 <?php
-    $this->start('css');
-        // echo $this->Html->css('frontend/apks.repo');
-        // echo $this->Html->css('frontend/apks.repo.360');
-    $this->end();
     $this->start('script');
 ?>
 <script type="text/javascript">
@@ -17,7 +13,7 @@
     });
 
     function donwloadApp(id){
-        window.open("<?php echo $this->HTML->url(array('controller'=>'application', 'action' => 'downloadApp'));?>/"+id, '_blank');
+       // window.open("<?php echo $this->HTML->url(array('controller'=>'application', 'action' => 'downloadApp'));?>/"+id, '_blank');
     }
 
     function search(){
@@ -30,8 +26,6 @@
 
 		//
     }
-
-
 
 </script>
 <?php

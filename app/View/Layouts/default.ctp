@@ -22,6 +22,41 @@
         echo $this->Html->css('style-responsive');
         echo $this->Html->css('sas');
         echo $this->fetch('css');
+        echo $this->Html->script('jquery-1.11.0.min');
+        echo $this->Html->script('jquery-migrate-1.0.0.min');
+        echo $this->Html->script('jquery-ui-1.10.0.custom.min');
+        echo $this->Html->script('jquery.ui.touch-punch');
+        echo $this->Html->script('modernizr');
+        echo $this->Html->script('bootstrap.min');
+        echo $this->Html->script('jquery.cookie');
+        echo $this->Html->script('fullcalendar.min');
+        echo $this->Html->script('jquery.dataTables.min');
+        echo $this->Html->script('excanvas');
+        echo $this->Html->script('jquery.flot');
+        echo $this->Html->script('jquery.flot.pie');
+        echo $this->Html->script('jquery.flot.stack');
+        echo $this->Html->script('jquery.flot.resize.min');
+        echo $this->Html->script('jquery.chosen.min');
+        echo $this->Html->script('jquery.uniform.min');
+        echo $this->Html->script('jquery.cleditor.min');
+        echo $this->Html->script('jquery.noty');
+        echo $this->Html->script('jquery.elfinder.min');
+        echo $this->Html->script('jquery.raty.min');
+        echo $this->Html->script('jquery.iphone.toggle');
+        echo $this->Html->script('jquery.uploadify-3.1.min');
+        echo $this->Html->script('jquery.gritter.min');
+        echo $this->Html->script('jquery.gritter.min');
+        echo $this->Html->script('jquery.imagesloaded');
+        echo $this->Html->script('jquery.masonry.min');
+        echo $this->Html->script('jquery.knob.modified');
+        echo $this->Html->script('jquery.sparkline.min');
+        echo $this->Html->script('counter');
+        echo $this->Html->script('retina');
+        echo $this->Html->script('custom');
+
+
+
+        echo $this->fetch('script');
     ?>
 
 
@@ -424,43 +459,6 @@
 </footer>
 
 
-<?php
-            echo $this->Html->script('jquery-1.9.1.min');
-            echo $this->Html->script('jquery-migrate-1.0.0.min');
-            echo $this->Html->script('jquery-ui-1.10.0.custom.min');
-            echo $this->Html->script('jquery.ui.touch-punch');
-            echo $this->Html->script('modernizr');
-            echo $this->Html->script('bootstrap.min');
-            echo $this->Html->script('jquery.cookie');
-            echo $this->Html->script('fullcalendar.min');
-            echo $this->Html->script('jquery.dataTables.min');
-            echo $this->Html->script('excanvas');
-            echo $this->Html->script('jquery.flot');
-            echo $this->Html->script('jquery.flot.pie');
-            echo $this->Html->script('jquery.flot.stack');
-            echo $this->Html->script('jquery.flot.resize.min');
-            echo $this->Html->script('jquery.chosen.min');
-            echo $this->Html->script('jquery.uniform.min');
-            echo $this->Html->script('jquery.cleditor.min');
-            echo $this->Html->script('jquery.noty');
-            echo $this->Html->script('jquery.elfinder.min');
-            echo $this->Html->script('jquery.raty.min');
-            echo $this->Html->script('jquery.iphone.toggle');
-            echo $this->Html->script('jquery.uploadify-3.1.min');
-            echo $this->Html->script('jquery.gritter.min');
-            echo $this->Html->script('jquery.gritter.min');
-            echo $this->Html->script('jquery.imagesloaded');
-            echo $this->Html->script('jquery.masonry.min');
-            echo $this->Html->script('jquery.knob.modified');
-            echo $this->Html->script('jquery.sparkline.min');
-            echo $this->Html->script('counter');
-            echo $this->Html->script('retina');
-            echo $this->Html->script('custom');
-
-
-
-            echo $this->fetch('script');
-?>
 
 </body>
 </html>
