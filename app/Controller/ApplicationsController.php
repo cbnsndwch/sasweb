@@ -64,7 +64,7 @@ class ApplicationsController extends AppController {
 
     public function repo($search = null) {
         $this->set('title_for_layout','Repositorio de aplicaciones');
-        $limit = 36;
+        $limit = 6;
 //        var_dump($_SERVER);
         //it1
         //aqui hay que verificar si se esta autenticado si es asi mostrar todas
@@ -154,7 +154,7 @@ class ApplicationsController extends AppController {
             //die();
         }
         $dataHistory = array('History' => array(
-            'name' =>  $file['Application']['id'],
+            'name' =>  $file['Application']['id'] .'-'. $file['Application']['code'],
             'ip' => $this->request->clientIp(),
             'client' => $client
         ));

@@ -11,11 +11,7 @@
             }
         });
     });
-
-    function donwloadApp(id){
-       // window.open("<?php echo $this->HTML->url(array('controller'=>'application', 'action' => 'downloadApp'));?>/"+id, '_blank');
-    }
-
+   
     function search(){
 //        var data = "<?php //echo $this->HTML->url(array('controller'=>'applications', 'action' => 'repo'));?>";
 //        if(data == ""){
@@ -26,6 +22,19 @@
 
 		//
     }
+
+                            function down($url){
+                                //aqui realizar la peticion con un form
+                                $form = $("<form></form>");
+                                $('body').append($form);
+                                $form.attr('action', $url);
+                                $form.attr('target', '_blank');
+                                $form.attr('method','POST');
+                                $form.append("<input type='hidden' name='client' value='Repo-List' />");
+                                $form.submit();
+
+                                //window.open(url);
+                            }
 
 </script>
 <?php
@@ -59,7 +68,11 @@
             </div>
             <div class="number">
                 <?php echo h($apk['Application']['downloads']);?>
-            <i class="icon-arrow-down"></i>
+
+                
+
+
+                <a href="javascript:void(null);" onclick='down("<?php echo $this->HTML->url(array('controller'=>'applications', 'action' => 'downloadApp',$apk['Application']['id']));?>");'' ><i class="icon-arrow-down"></i></a>
             </div>
             <div class="title2">descargas</div>
             <div class="footer">
