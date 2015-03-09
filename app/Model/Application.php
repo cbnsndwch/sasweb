@@ -35,6 +35,19 @@ class Application extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
+		),
+		'Coment' => array(
+			'className' => 'Coment',
+			'foreignKey' => 'applications_id',
+			'dependent' => false,
+			'conditions' => array('Coment.visible' => 1),
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
 		)
 	);
 

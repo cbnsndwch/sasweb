@@ -9,7 +9,7 @@ App::uses('AppController', 'Controller');
  */
 class ApplicationsController extends AppController {
 
-    var $uses = array('Application', 'Version', 'Apk', 'History', 'Category','Configuration');
+    var $uses = array('Application', 'Version', 'Apk', 'History', 'Category','Configuration', 'Coment');
 /**
  * Components
  *
@@ -28,6 +28,8 @@ class ApplicationsController extends AppController {
             'reponews',
             'reporecommended',
             'repoverificate',
+            'comments',
+            'addcomment',
             'detail',
             'downloadApp',
             'downloadVersion'
@@ -64,6 +66,47 @@ class ApplicationsController extends AppController {
 		$this->set('applications', $this->Paginator->paginate());
 	}
 
+    public function comments($id = null){
+        $this->set('title_for_layout','Comentarios');
+        if (!$this->Application->exists($id)) {
+            throw new NotFoundException(__('Invalid apk'));
+        }      
+        $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $id));
+        $this->Application->recursive = 2;
+        $apk = $this->Application->find('first', $options);   
+        //var_dump($apk);
+        $this->set('apk', $apk);
+    }
+
+    public function addcomment($id = null){
+        if (!$this->Application->exists($id)) {
+            $this->redirect(array('action' => 'comments',$id));
+        } else{
+            $coment = $_POST['coment'];
+
+            $insert = array(
+                'Coment' => array(
+                        'applications_id' => $id,
+                        'ip' => $this->request->clientIp(),
+                        'coment' => $coment,
+                        'visible' => 1
+
+                    )
+                );
+            
+            if($this->Auth->loggedIn())
+                $insert['Coment']['users_id'] = $this->Auth->user()['id'];
+
+            $this->Coment->create();
+            if($this->Coment->save($insert)){
+               //$this->Session->setFlash(__('Se ha almacenado el comentario con exito.'));
+            }else{
+               // $this->Session->setFlash(__('No se pudo almacenar el comentario.'));
+            }
+
+             $this->redirect(array('action' => 'comments',$id));
+        }
+    }
 
 
     public function repo($cat = -1, $search = null) {

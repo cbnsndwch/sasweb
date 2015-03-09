@@ -143,6 +143,16 @@
                                 </td>
                             </tr>
                             <?php endif; ?>
+
+                            <tr>
+                                <td>Commentarios</td>
+                                <td class="actions">
+                                    <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/comments/' . $apk['Application']['id'];?>/">
+                                        <?php echo count($apk['Coment']);?>
+                                    </a>
+                                </td>
+                            </tr>
+
                             <!-- Zona de Manager y admins -->
                             <tr>
                                 <td>Descargar</td>
@@ -187,9 +197,10 @@
                 </div>
             </div>
             <!-- Aqui terminan las propiedades -->
-            <hr/>
+            
             <!-- Aqui comienza las versiones -->
              <?php if (!empty($apk['Version'])): ?>
+                <hr/>
             <div class="row-fluid" >
                 <div class="box-header">
                     <h2>
@@ -234,9 +245,10 @@
             </div>
             <?php endif; ?>
             <!-- Aqui terminan las versiones -->
-
+            
             <!-- Aqui comienza las versiones -->
              <?php if (isset($related)): ?>
+                <hr/>
             <div class="row-fluid" >
                 <div class="box-header">
                     <h2>
@@ -253,8 +265,8 @@
                 <div class="box-content" style="display:none;">
                     <?php foreach ($related as $app): ?>
 
-                        <a href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/detail' . '/' . $app['Application']['id'];?>" class="quick-button metro blue span4" style="padding-top:10px;">
-                            <i class="icon-download-alt"></i>
+                        <a href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/detail' . '/' . $app['Application']['id'];?>" class="quick-button metro blue span4" style="padding-top:10px;">                            
+                            <img width="60px" height="60px" alt="<?php echo h($app['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($app['Application']['id']) . '/' . h($app['Application']['version']) . '/' . h($app['Application']['id']);?>.png" />                            
                             <p><?php echo $app['Application']['label']; ?></p>
                             <span class="notification green">
                                 <?php 
