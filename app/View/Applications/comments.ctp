@@ -33,17 +33,19 @@
 				</li>
 			<?php $count++; endforeach; ?>
 		</ul>
-		<?php //if ($logged_in): ?>
+		<?php 
+		//if ($logged_in): 
+			$url = $this->HTML->url(array('controller'=>'applications', 'action' => 'addcomment',$apk['Application']['id']));
+		?>
 		<script type="text/javascript">
-			function addComment(){
+			function addComment(data){
 				var e = $('#messagearea').val();
-				var $url = "<?php echo $this->HTML->url(array('controller'=>'applications', 'action' => 'addcomment',$apk['Application']['id']));?>";
 				if(e == ""){
 					alert("Debe escribir un comentario.");
 				}else{
 					 $form = $("<form></form>");
 			        $('body').append($form);
-			        $form.attr('action', $url);
+			        $form.attr('action', data);
 			        //$form.attr('target', '_blank');
 			        $form.attr('method','POST');
 			        $form.append("<input type='hidden' name='coment' value='" + e + "' />");
@@ -54,7 +56,11 @@
 		<div class="chat-form">
 			<!-- <input type="text" value="wqwer" /> -->
 			<textarea id="messagearea"></textarea>
-			<button class="btn btn-info" onclick="addComment();">Enviar comentario</button>
+			<?php 
+			//if ($logged_in): 
+				$url = $this->HTML->url(array('controller'=>'applications', 'action' => 'addcomment',$apk['Application']['id']));
+			?>
+			<button class="btn btn-info" onclick="addComment('<?=$url;?>');">Enviar comentario</button>
 		</div>	
 		<?php //endif; ?>
 
