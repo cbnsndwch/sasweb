@@ -37,14 +37,14 @@
 		//if ($logged_in): 
 		?>
 		<script type="text/javascript">
-			function addComment(data){
+			function addComment($data){
 				var e = $('#messagearea').val();
 				if(e == ""){
 					alert("Debe escribir un comentario.");
 				}else{
 					 $form = $("<form></form>");
 			        $('body').append($form);
-			        $form.attr('action', data);
+			        $form.attr('action', $data);
 			        //$form.attr('target', '_blank');
 			        $form.attr('method','POST');
 			        $form.append("<input type='hidden' name='coment' value='" + e + "' />");
@@ -54,11 +54,8 @@
 		</script>
 		<div class="chat-form">
 			<!-- <input type="text" value="wqwer" /> -->
-			<textarea id="messagearea"></textarea>
-			<?php 
-				$url = $this->HTML->url(array('controller'=>'applications', 'action' => 'addcomment',$apk['Application']['id']));
-			?>
-			<button class="btn btn-info" onclick="addComment('<?php echo $url;?>');">Enviar comentario</button>
+			<textarea id="messagearea"></textarea>			
+			<button class="btn btn-info" onclick="addComment('<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/addcomment/<?=$apk['Application']['id']?>');">Enviar comentario</button>
 		</div>	
 		<?php //endif; ?>
 
