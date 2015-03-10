@@ -15,7 +15,7 @@
     function search(){
 //        var data = "<?php //echo $this->HTML->url(array('controller'=>'applications', 'action' => 'repo'));?>";
 //        if(data == ""){
-            document.location = "<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repo/" + $('#selectCategory').val() + '/' + $('#search').val();
+            document.location = "<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reponews/" + $('#selectCategory').val() + '/' + $('#search').val();
 //        }else{
 //            document.location = data + "/" + $('#search').val();
 //        }
@@ -96,7 +96,7 @@
     <div class="clearfix"></div>
 	<div class="row-fluid">
         <div class="span12">
-            <div class="dataTables_info text-center">
+            <div class="dataTables_info ">
             	<small><?php
             	echo $this->Paginator->counter(array(
             	'format' => __('Pagina {:page} de {:pages},

@@ -19,6 +19,7 @@ class GenerateShell  extends AppShell{
     var $uses = array(
         'Apk',
         'Configuration',
+        'Category',
         'Upload',
         'Application',
         'Noticy',
@@ -44,15 +45,6 @@ class GenerateShell  extends AppShell{
         $this->out();
         $this->out(" Uso a travez de Proxy:");
         $this->out("  ~$ cake generate update <usuario>:<contraseña>@<servidor>:<puerto>");
-//        $this->out();
-//        $this->out();
-//        $this->out();
-//        $this->out();
-//        $this->out();
-//        $this->out();
-//        $this->out();
-//        $this->out();
-//        $this->out();
         $this->out("=========================================================================");
 
 //        $this->out('Aqui tengo que poner el usage que indica como usar este shell, importante si alguien mas va a administrar el sitio');
@@ -155,8 +147,12 @@ class GenerateShell  extends AppShell{
                             'version' =>$info['version'],
                             'code' => $info['code'],
                             'size' => $info['size'],
-                            'category' => 'Terceros',
-                            'description' => 'No obtenida',
+                            'categories_id' => 1,
+                            'description' => '',
+                            'verificate' => 0,
+                            'recommended' => 0,
+                            'only_logged' => 0,
+                            'users_id' => 1,
                             'sdkversion' =>$info['sdk'],
                             'downloads' => 0,
                             'rating' => 0,
@@ -245,10 +241,10 @@ class GenerateShell  extends AppShell{
 
 
             }
-        //marco la BD como modificada
-        $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
-        $config['Configuration']['bd_update'] = 1;
-        $this->Configuration->save($config);
+            //marco la BD como modificada
+            $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
+            $config['Configuration']['bd_update'] = 1;
+            $this->Configuration->save($config);
 //
         }else{
             $this->out('Debe especificar el directorio a escanear');
@@ -256,6 +252,7 @@ class GenerateShell  extends AppShell{
     }
 
     public function update(){
+        $bad_category = array('Terceros','Temporalmente nada', '');
         $proxy = null;
         if(isset($this->args[0])){
             $proxy = $this->args[0];
@@ -264,8 +261,7 @@ class GenerateShell  extends AppShell{
         $options = array(
             'conditions' => array(
                 'OR' => array(
-                    'Application.category' => 'Terceros',
-                    'Application.category is null'
+                    'Application.categories_id' => 1
                 )
             )
         );
@@ -275,23 +271,48 @@ class GenerateShell  extends AppShell{
         $i = 0;
         foreach($apps as $app){
             $info = $this->get_contenido($app['Application']['id'], $proxy);
-            if($info['category'] != 'Terceros'){
-                //si es distinto se actualiza la informacion
-                $app['Application']['category'] = $info['category'];
-                $app['Application']['category'] = "";
-                $app['Application']['description'] = $info['description'];
-                 if($info['category'] === "")
-                    continue;
-                if($this->Application->save($app)){
-                    $this->out("La aplicacion " . $app['Application']['label'] . 'se coloco en la categoria ' . $info['category'] );
-                    $i ++;
+            
+            //verificar qeu la categoria existe
+            $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
+            $cat_id = 0;
+            if (!$noesta) {                    
+                //verifico que no sea una de las palabras qeu no puede ir
+                if(!in_array($info['category'], $bad_category)){                       
+                    //sino es una mala palabra la inserto
+                    $toINsert = array(
+                        'Category' => array(
+                            'name' => $info['category']
+                        )
+                    );
+                    //lo inserto en app sin problema alguna ya que no esta
+                    $this->Category->create();
+                    $cat_id = $this->Category->id;
+                    if ($this->Category->save($toINsert)) {                        
+                        $this->out($app['Application']['category'] . ' Fue agregada con exito a la tabla Categorias.');
+                    }
+                }else{
+                    $cat_id = 1;
                 }
+            }else{
+                $cat_id = $noesta['Category']['id'];
             }
+
+            //si es distinto se actualiza la informacion
+            $app['Application']['categories_id'] = $cat_id;
+            $app['Application']['description'] = $info['description'];
+             if($info['category'] === "")
+                continue;
+            if($this->Application->save($app)){
+                $this->out("La aplicacion " . $app['Application']['label'] . 'se coloco en la categoría ' . '"' . $app['Category']['name'] . '"');
+                $i ++;
+            }
+            
         }
         $this->out($i . ' aplicaciones a actualizadas en googleplay');
     }
 
     public function update_version(){
+        $bad_category = array('Terceros','Temporalmente nada', '');
         $proxy = null;
         if(isset($this->args[0])){
             $proxy = $this->args[0];
@@ -299,7 +320,7 @@ class GenerateShell  extends AppShell{
 
         $options = array(
             'conditions' => array(
-                'Version.category' => 'Terceros'
+                'Version.categories_id' => 1
             )
         );
         //Aplicaciones a actualizar
@@ -308,12 +329,36 @@ class GenerateShell  extends AppShell{
         $i = 0;
         foreach($apps as $app){
             $info = $this->get_contenido($app['Version']['id'], $proxy);
-            if($info['category'] != 'Terceros'){
-                //si es distinto se actualiza la informacion
-                $app['Version']['category'] = $info['category'];
-                $app['Version']['description'] = $info['description'];
-                if($this->Version->save($app))
-                    $i ++;
+            //verificar qeu la categoria existe
+            $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
+            $cat_id = 0;
+            if (!$noesta) {                    
+                //verifico que no sea una de las palabras qeu no puede ir
+                if(!in_array($info['category'], $bad_category)){                       
+                    //sino es una mala palabra la inserto
+                    $toINsert = array(
+                        'Category' => array(
+                            'name' => $info['category']
+                        )
+                    );
+                    //lo inserto en app sin problema alguna ya que no esta
+                    $this->Category->create();
+                    $cat_id = $this->Category->id;
+                    if ($this->Category->save($toINsert)) {                        
+                        $this->out($app['Application']['category'] . ' Fue agregada con exito a la tabla Categorias.');
+                    }
+                }else{
+                    $cat_id = 1;
+                }
+            }else{
+                $cat_id = $noesta['Category']['id'];
+            }
+            //si es distinto se actualiza la informacion
+            $app['Version']['categories_id'] = $cat_id;
+            $app['Version']['description'] = $info['description'];
+            if($this->Version->save($app)){
+                $this->out("La aplicacion " . $app['Version']['label'] . 'se coloco en la categoría ' . '"' . $app['Category']['name'] . '"');
+                $i ++;
             }
         }
         $this->out($i . ' aplicaciones a actualizadas en googleplay');
@@ -362,12 +407,16 @@ class GenerateShell  extends AppShell{
                         'version' => $app['Application']['version'],
                         'code' => $app['Application']['code'],
                         'size' => $app['Application']['size'],
-                        'category' => $app['Application']['category'],
+                        'category' => $app['Category']['name'],
                         'description' => $app['Application']['description'],
                         'sdkversion' => $app['Application']['sdkversion'],
                         'downloads' => $app['Application']['downloads'],
                         'rating' => $app['Application']['rating'],
                         'have_data' => $app['Application']['have_data'],
+                        'verificate' => $app['Application']['verificate'],
+                        'recommended' => $app['Application']['recommended'],
+                        'only_logged' => $app['Application']['only_logged'],
+                        'uploader' => $app['User']['name'],
                         'news' => 0,
                         'have_version' => $havev,
                         'created' => $app['Application']['created'],
@@ -412,6 +461,10 @@ class GenerateShell  extends AppShell{
                     'downloads' => $app['Application']['downloads'],
                     'rating' => $app['Application']['rating'],
                     'have_data' => $app['Application']['have_data'],
+                    'verificate' => $app['Application']['verificate'],
+                    'recommended' => $app['Application']['recommended'],
+                    'only_logged' => $app['Application']['only_logged'],
+                    'uploader' => $app['User']['name'],
                     'news' => 1,
                     'have_version' => $havev
                 )
@@ -589,14 +642,7 @@ class GenerateShell  extends AppShell{
         } else {
             $html = @file_get_contents($url, false);
         }
-         // var_dump($html);
-        // die();
-        // $div_contenido = array(array(), array('No obtenida'));
-        // $categoria = array(array(), array('Terceros'));
         if ($html !== false) {
-        //     $div_contenido[1][0] = 'No obtenida';
-        //     $categoria[1][0] = 'Terceros';
-        // } else {
             //preg_match_all("/\<div\ id\=\"doc\-original\-text\" itemprop=\"description\"\>(.*?)\<\/div\>/", $html, $div_contenido);
             //preg_match_all("/\<a href\=\"\/store\/apps\/category\/(.*?)\?feature\=category\-nav\"\>(.*?)\<\/a\>/", $html, $categoria);
 
@@ -609,8 +655,6 @@ class GenerateShell  extends AppShell{
             $div_contenido = array(array(), array('No obtenida'));
             $categoria = array(array(), array('Terceros'));
         }
-        //var_dump($div_contenido);
-
         return array('description' => $div_contenido[1][0], 'category' => $categoria[1][0]);
     }
     /*
@@ -618,13 +662,13 @@ class GenerateShell  extends AppShell{
      */
     function copy_to_pool($filename, $info)
     {
-        $root = $this->getBasePath() . 'webroot\\';
+        $root = $this->getBasePath() . 'webroot' . DS;
         if ($this->is_apk($filename)) {
-            $path = $root . 'pool\\' . $info['id'] . '\\';
+            $path = $root . 'pool' . DS . $info['id'] . DS;
             if (!is_dir($path)) {
                 mkdir($path, 0777);
             }
-            $path .=  $info['version'] . '\\';
+            $path .=  $info['version'] . DS;
             if (!is_dir($path)) {
                 mkdir($path, 0777);
             }
@@ -657,13 +701,24 @@ class GenerateShell  extends AppShell{
         return $data;
     }
 
+    private function esWindow(){
+        $cadenaparaWindow = "Win";
+        if(!strstr($_SERVER["SERVER_SOFTWARE"], $cadenaparaWindow))
+            return false;
+        return true;
+    }
+
     /*
      * Crea el icono de un apk a partir del path sin la extencion de el apk y el nombre del recurso obtenido en icon
      */
     function apk_icon($filename, $resourse)
     {
-        $root = $this->getBasePath() . 'webroot\\';
-        exec($root .'soft\\unzip -p "' . $filename . '.apk' . '" ' . $resourse . ' > ' . $filename . '.png');
+        $root = $this->getBasePath() . 'webroot' . DS;
+        if($this->esWindow()) {
+            exec($root .'soft\\unzip -p "' . $filename . '.apk' . '" ' . $resourse . ' > ' . $filename . '.png');
+        }else{
+            exec('unzip -p "' . $filename . '.apk' . '" ' .  $resourse . ' > ' . $filename . '.png');
+        }
     }
 
     /*
@@ -671,17 +726,31 @@ class GenerateShell  extends AppShell{
      */
     private function apk_info($APK)
     {
-        $root = $this->getBasePath() . 'webroot\\';
-        $SIZE = filesize($APK);
-        $SDK = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^sdkVersion: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f2 | ' . $root . 'soft\\head -1');
-        $ID = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^package: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f2 | ' . $root . 'soft\\head -1');
-        $LABEL = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep application-label | ' . $root . 'soft\\cut -d: -f2 | ' . $root . 'soft\\head -1 ');
-        $LABEL = substr($LABEL,1, strlen($LABEL)- 2);
-        $VERSION = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^package: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f4 | ' . $root . 'soft\\head -1 ');
-        $CODE = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^package: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f6 | ' . $root . 'soft\\head -1 ');
-        $RES = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^application: | ' . $root . 'soft\\cut -d= -f3 | ' . $root . 'soft\\head -1');
-        $RES = substr($RES,1, strlen($RES)- 2);
-        return array('id' => $ID, 'label' => $LABEL, 'version' => $VERSION, 'code' => $CODE, 'sdk' => $SDK, 'size' => $SIZE, 'icon' => $RES);
+        $root = $this->getBasePath() . 'webroot' . DS;
+        if($this->esWindow()) {
+            $SIZE = filesize($APK);
+            $SDK = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^sdkVersion: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f2 | ' . $root . 'soft\\head -1');
+            $ID = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^package: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f2 | ' . $root . 'soft\\head -1');
+            $LABEL = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep application-label | ' . $root . 'soft\\cut -d: -f2 | ' . $root . 'soft\\head -1 ');
+            $LABEL = substr($LABEL,1, strlen($LABEL)- 2);
+            $VERSION = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^package: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f4 | ' . $root . 'soft\\head -1 ');
+            $CODE = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^package: | ' . $root . 'soft\\cut -d' . '"' . '\'' . '" -f6 | ' . $root . 'soft\\head -1 ');
+            $RES = exec($root . 'soft\\aapt dump --values badging ' . $APK . ' | ' . $root . 'soft\\grep ^application: | ' . $root . 'soft\\cut -d= -f3 | ' . $root . 'soft\\head -1');
+            $RES = substr($RES,1, strlen($RES)- 2);
+            return array('id' => $ID, 'label' => $LABEL, 'version' => $VERSION, 'code' => $CODE, 'sdk' => $SDK, 'size' => $SIZE, 'icon' => $RES);
+        }else{
+            $SIZE = filesize($APK);
+            //echo $_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt';
+//            $ALL = exec($_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt dump --values badging ' . $APK );
+//            echo $ALL;
+            $SDK = exec($_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt dump --values badging ' . $APK . ' | grep ^sdkVersion: | cut -d\\\' -f2 | head -1');
+            $ID = exec($_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt dump --values badging ' . $APK . ' | grep ^package: | cut -d\\\' -f2 | head -1');
+            $LABEL = exec($_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt dump --values badging ' . $APK . ' | grep application-label | cut -d: -f2 | head -1 | sed s/\\\'//g');
+            $VERSION = exec($_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt dump --values badging ' . $APK . ' | grep ^package: | cut -d\\\' -f4 | head -1 ');
+            $CODE = exec($_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt dump --values badging ' . $APK . ' | grep ^package: | cut -d\\\' -f6 | head -1 ');
+            $RES = exec($_SERVER['CONTEXT_DOCUMENT_ROOT'] . '/soft/aapt dump --values badging ' . $APK . ' | grep ^application: | cut -d= -f3 | head -1 | sed s/\\\'//g');
+            return array('id' => $ID, 'label' => $LABEL, 'version' => $VERSION, 'code' => $CODE, 'sdk' => $SDK, 'size' => $SIZE, 'icon' => $RES);
+        }
     }
     /*
      * Determina si el path de un fichero termina con la extencion apk
@@ -695,6 +764,7 @@ class GenerateShell  extends AppShell{
      */
     private function getBasePath(){
         $data = $_SERVER['argv'][2];
-        return substr($data,0, strlen($data) -1 ) . '\\';
+        $this->out("Root Dir: " . substr($data,0, strlen($data) -1 ) . DS);
+        return substr($data,0, strlen($data) -1 ) . DS;
     }
 }

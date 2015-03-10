@@ -813,7 +813,7 @@ ul.messages li .message {
 }
 
 .box {
-	border: 2px solid #eee;
+	/*border: 2px solid #eee;*/
 	background: #fff !important;
 	margin-bottom: 28px;	
 }

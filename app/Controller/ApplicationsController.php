@@ -9,13 +9,13 @@ App::uses('AppController', 'Controller');
  */
 class ApplicationsController extends AppController {
 
-    var $uses = array('Application', 'Version', 'Apk', 'History');
+    var $uses = array('Application', 'Version', 'Apk', 'History', 'Category','Configuration');
 /**
  * Components
  *
  * @var array
  */
-	public $components = array('Paginator', 'Session');
+	public $components = array('Paginator', 'Session','DebugKit.Toolbar');
 
     public function beforeFilter(){
         parent::beforeFilter();
@@ -25,6 +25,9 @@ class ApplicationsController extends AppController {
 //        }
         $this->Auth->allow(
             'repo',
+            'reponews',
+            'reporecommended',
+            'repoverificate',
             'detail',
             'downloadApp',
             'downloadVersion'
@@ -35,6 +38,7 @@ class ApplicationsController extends AppController {
                 'Application.label' => 'asc'
             )
         );
+
     }
 
     public function isAuthorized($user) {
@@ -62,65 +66,159 @@ class ApplicationsController extends AppController {
 
 
 
-    public function repo($search = null) {
+    public function repo($cat = -1, $search = null) {
+        $title= "sssss";
         $this->set('title_for_layout','Repositorio de aplicaciones');
         $limit = 6;
-//        var_dump($_SERVER);
-        //it1
-        //aqui hay que verificar si se esta autenticado si es asi mostrar todas
-        //si no se esta autenticado mostrar solo las validas
         $settings =array(
             'limit'=>$limit ,
             'order' => array(
                 'Application.label' => 'asc'
             ));
-        // var_dump($_SERVER);
-
         if(isset($search))
-        {
-            if(!isset($this->Auth->user()['username'])){
-                $settings =array(
-                    'limit'=>$limit ,
-                    //'conditions' => array('Apk.category is not null', 'Apk.category is not equal to \"Untrusted\"'),
-                    'conditions' => array(
-                        'Application.category is not null',
-                        'Application.category <>' => 'Untrusted',
-                        'OR' => array(
-                            'Application.id LIKE' => '%' . $search . '%',
-                            'Application.label LIKE' => '%' . $search . '%'
-                        )
-                    ),
-                    'order' => array(
-                        'Application.label' => 'asc'
-                    ));
-            }else{
-                $settings =array(
-                    'limit'=>$limit ,
-                    //'conditions' => array('Apk.category is not null', 'Apk.category is not equal to \"Untrusted\"'),
-                    'conditions' => array(
-                        'OR' => array(
-                            'Application.id LIKE' => '%' . $search . '%',
-                            'Application.label LIKE' => '%' . $search . '%'
-                        )
-                    ),
-                    'order' => array(
-                        'Application.label' => 'asc'
-                    ));
-            }
-        }else{
-            if(!isset($this->Auth->user()['username'])){
-                $settings =array(
-                    'limit'=>$limit ,
-                    'conditions' => array('Application.category is not null', 'Application.category <>' => 'Untrusted', 'Application.category <>' => 'Terceros'),
-                    'order' => array(
-                        'Application.label' => 'asc'
-                    ));
-            }
+        {           
+            $settings['conditions'] = array(
+                    'OR' => array(
+                        'Application.id LIKE' => '%' . $search . '%',
+                        'Application.label LIKE' => '%' . $search . '%'
+                    )
+                );           
         }
-
-//        if(!isset($this->Auth->user()['username'])){
+        if($cat != -1){
+             $settings['conditions']['Application.categories_id'] = $cat;
+        }
+        if(!$this->Auth->loggedIn()){ //por ahora no hay restrincciones de este tipo todas las app tienen 0 pero por si acaso
+            $settings['conditions']['Application.only_logged'] = 0;
+        }
         $this->Paginator->settings=$settings;
-//        }
+        //poner las categorias para el menu
+        $categorys =  $this->Category->find('all', array());
+        // var_dump($categorys);
+        $this->set('category',$categorys);
+        $this->set('catsel',$cat);
+
+        //$this->layout = 'frontend';
+        $this->Application->recursive = 0;
+        $this->set('apks', $this->Paginator->paginate());
+        $this->set('search',$search);
+    }
+
+    public function reponews($cat = -1, $search = null) {
+        $title= "sssss";
+        $this->set('title_for_layout','Aplicaciones nuevas');
+        $limit = 6;
+        //pido la configuracion
+        $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
+
+        $settings =array(
+            'limit'=>$limit ,
+            'conditions' => array(
+                'Application.created >= "' . $config['Configuration']['last_db_update'] . '"' ,
+                ),
+            'order' => array(
+                'Application.label' => 'asc'
+            ));
+        if(isset($search))
+        {           
+            $settings['conditions']['OR'] = array(
+                        'Application.id LIKE' => '%' . $search . '%',
+                        'Application.label LIKE' => '%' . $search . '%'
+                    );           
+        }
+        if($cat != -1){
+             $settings['conditions']['Application.categories_id'] = $cat;
+        }
+        if(!$this->Auth->loggedIn()){ //por ahora no hay restrincciones de este tipo todas las app tienen 0 pero por si acaso
+            $settings['conditions']['Application.only_logged'] = 0;
+        }
+        $this->Paginator->settings=$settings;
+        //poner las categorias para el menu
+        $categorys =  $this->Category->find('all', array());
+        // var_dump($categorys);
+        $this->set('category',$categorys);
+        $this->set('catsel',$cat);
+
+        //$this->layout = 'frontend';
+        $this->Application->recursive = 0;
+        $this->set('apks', $this->Paginator->paginate());
+        $this->set('search',$search);
+    }
+
+    public function reporecommended($cat = -1, $search = null) {
+        $title= "sssss";
+        $this->set('title_for_layout','Aplicaciones recomendadas');
+        $limit = 6;
+        //pido la configuracion
+        $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
+
+        $settings =array(
+            'limit'=>$limit ,
+            'conditions' => array(
+                'Application.recommended' => 1,
+                ),
+            'order' => array(
+                'Application.label' => 'asc'
+            ));
+        if(isset($search))
+        {           
+            $settings['conditions']['OR'] = array(
+                        'Application.id LIKE' => '%' . $search . '%',
+                        'Application.label LIKE' => '%' . $search . '%'
+                    );           
+        }
+        if($cat != -1){
+             $settings['conditions']['Application.categories_id'] = $cat;
+        }
+        if(!$this->Auth->loggedIn()){ //por ahora no hay restrincciones de este tipo todas las app tienen 0 pero por si acaso
+            $settings['conditions']['Application.only_logged'] = 0;
+        }
+        $this->Paginator->settings=$settings;
+        //poner las categorias para el menu
+        $categorys =  $this->Category->find('all', array());
+        // var_dump($categorys);
+        $this->set('category',$categorys);
+        $this->set('catsel',$cat);
+
+        //$this->layout = 'frontend';
+        $this->Application->recursive = 0;
+        $this->set('apks', $this->Paginator->paginate());
+        $this->set('search',$search);
+    }
+
+     public function repoverificate($cat = -1, $search = null) {
+        $title= "sssss";
+        $this->set('title_for_layout','Aplicaciones recomendadas');
+        $limit = 6;
+        //pido la configuracion
+        $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
+
+        $settings =array(
+            'limit'=>$limit ,
+            'conditions' => array(
+                'Application.verificate' => 1,
+                ),
+            'order' => array(
+                'Application.label' => 'asc'
+            ));
+        if(isset($search))
+        {           
+            $settings['conditions']['OR'] = array(
+                        'Application.id LIKE' => '%' . $search . '%',
+                        'Application.label LIKE' => '%' . $search . '%'
+                    );           
+        }
+        if($cat != -1){
+             $settings['conditions']['Application.categories_id'] = $cat;
+        }
+        if(!$this->Auth->loggedIn()){ //por ahora no hay restrincciones de este tipo todas las app tienen 0 pero por si acaso
+            $settings['conditions']['Application.only_logged'] = 0;
+        }
+        $this->Paginator->settings=$settings;
+        //poner las categorias para el menu
+        $categorys =  $this->Category->find('all', array());
+        // var_dump($categorys);
+        $this->set('category',$categorys);
+        $this->set('catsel',$cat);
 
         //$this->layout = 'frontend';
         $this->Application->recursive = 0;
@@ -140,16 +238,12 @@ class ApplicationsController extends AppController {
         //Salvar el apk con el aumento de el campo downloads para indicar que hubo un cambio mas
         $this->Application->id = $id;
         $this->Application->saveField('downloads', $down);
-        if ($this->Apk->exists($id)) {
-            $this->Apk->id = $id;
-            $this->Apk->saveField('downloads', $down);
-        }
-        //$data1 = $this->request->header('EXTRA_INFO');
+
         if(isset($this->request->data['client']))
             $client = $this->request->data['client'];
         else{
             $client = 'directDownload';
-            throw new NotFoundException(__('App client obsolete'));
+            //throw new NotFoundException(__('App client obsolete'));
             //echo "error";
             //die();
         }
@@ -204,12 +298,36 @@ class ApplicationsController extends AppController {
     }
 
     public function detail($id = null) {
+
+        $this->set('title_for_layout','Detalles');
         if (!$this->Application->exists($id)) {
             throw new NotFoundException(__('Invalid apk'));
         }
+        
 
         $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $id));
-        $this->set('apk', $this->Application->find('first', $options));
+        $apk = $this->Application->find('first', $options);
+        //buscar las aplicaciones relacionadas
+        if($apk['Category']['id'] !== 1){
+
+            $count = $this->Application->find('count', array('conditions' => array(
+                    'Application.categories_id' => $apk['Category']['id'],
+                    'Application.id != ' . "'" .$apk['Application']['id'] . "'"
+                )));
+
+            $result = rand(0,$count - 3);   
+            //aqui cojo 6 aplicaciones que sean de la miama categoria
+            $related = $this->Application->find('all', array(
+                'conditions' => array(
+                    'Application.categories_id' => $apk['Category']['id'],
+                    'Application.id != ' . "'" .$apk['Application']['id'] . "'"
+                ), 
+                'limit' => 3,
+                'offset' => $result
+            ));// array($result , $result + 3)
+            $this->set('related', $related);
+        }
+        $this->set('apk', $apk);
     }
 
 /**

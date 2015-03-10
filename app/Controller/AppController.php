@@ -32,8 +32,8 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
-    public $uses = array('User');
-//Descomentar esta linea cuando se monte el proyecto en produccion
+    public $uses = array('User', 'Application', 'Configuration');
+    //Descomentar esta linea cuando se monte el proyecto en produccion
     //public $layout = 'production';
 
     public $components = array('Session',
@@ -44,20 +44,6 @@ class AppController extends Controller {
             'authError' => 'No está autorizado a consultar esa página.'
             //'authenticate' => array('Form' => array('fields' => array('username' => 'email')))
         )
-//        'Auth'
-
-//        'Auth' => array(
-//            'loginRedirect' => array(
-//                'controller' => 'users',
-//                'action' => 'login'
-//            ),
-////            'loginRedirect' =>'http://localhost:82/sas/applications/repo',
-//            'logoutRedirect' => array(
-//                'controller' => 'applications',
-//                'action' => 'repo'
-//            ),
-//            'authorize' => array('Controller')
-//        )
     );
 
     public function beforeFilter() {
@@ -79,6 +65,35 @@ class AppController extends Controller {
 
         $this->set('logged_in',$this->Auth->loggedIn());
         $this->set('userAutenticated',$this->Auth->user());
+        $this->set('isadmin',($this->Auth->user()['role'] == 'admin')?1:0);
+
+        //data for menu
+        //put data en la pagina
+        $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
+        $settings =array(
+            'conditions' => array(
+                'Application.created >= "' . $config['Configuration']['last_db_update'] . '"' ,
+                ));
+        $cantNew = $this->Application->find('count', $settings);
+
+        $settings1 =array(
+            'conditions' => array(
+                'Application.recommended ' => 1,
+                ));
+        $cantRecomended = $this->Application->find('count', $settings1);
+
+        $settings1 =array(
+            'conditions' => array(
+                'Application.verificate ' => 1,
+                ));
+        $cantverificate = $this->Application->find('count', $settings1);
+
+        
+        $this->set('cantnews',$cantNew);
+        $this->set('recommended',$cantRecomended);
+        $this->set('verificate',$cantverificate);
+
+        
     }
 
     public function isAuthorized($user) {

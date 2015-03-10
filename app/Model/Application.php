@@ -38,4 +38,21 @@ class Application extends AppModel {
 		)
 	);
 
+	public $belongsTo = array(
+		'Category' => array(
+			'className' => 'Category',
+			'foreignKey' => 'categories_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'User' => array(
+			'className' => 'User',
+			'foreignKey' => 'users_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		)
+	);
+
 }

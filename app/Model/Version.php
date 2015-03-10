@@ -31,4 +31,14 @@ class Version extends AppModel {
 	// 		'order' => 'version'
 	// 	)
 	// );
+
+	public $belongsTo = array(
+		'Category' => array(
+			'className' => 'Category',
+			'foreignKey' => 'categories_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		)
+	);
 }

@@ -13,6 +13,23 @@
 		bottom: 20px;
 		right: 10px;
 	}
+
+	.statboxsas .number .arrow{
+		text-decoration: none;
+		color: white !important;
+		
+	}
+
+	.statboxsas .number .arrow:hover{
+		text-decoration: none;
+	}
+	.statboxsas .number a:focus{
+		text-decoration: none;
+	}
+
+	.statboxsas .number a i{
+		color: white !important;
+	}
 	
 	.statboxsas .title {
 		font-size: 16px;
@@ -45,3 +62,29 @@
 		color: #fff;
 		text-decoration: none;
 	}
+
+	/*.pagination > li > a, .pagination > li > span {
+	    color: #2D89EF;
+	}
+
+	.pagination > li  {
+	    display: inline;
+	}
+
+	.pagination > .active > a,
+	.pagination > .active > span,
+	.pagination > .active > a:hover,
+	.pagination > .active > span:hover,
+	.pagination > .active > a:focus,
+	.pagination > .active > span:focus {
+	    background-color: #2D89EF;
+	    border-color: #fff;
+	    color: #fff;
+	}
+
+	.pagination > li > a:hover,
+	.pagination > li > span:hover,
+	.pagination > li > a:focus,
+	.pagination > li > span:focus {
+	    color: #2D19FF;
+	}*/
