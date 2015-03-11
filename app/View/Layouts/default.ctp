@@ -74,7 +74,10 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
 </a>
-<a class="brand" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repo"><span>SAS</span></a>
+<a class="brand" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repo">
+    <img height="30px" width="20px" src="/sas/img/layout/frontend/logoBanner.png">
+    <span>SAS</span>
+</a>
 
 <!-- start: Header Menu -->
 <div class="nav-no-collapse header-nav">
