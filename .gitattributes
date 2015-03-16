@@ -34,3 +34,4 @@
 *.mo binary
 *.pdf binary
 *.db binary
+aapt binary
