@@ -12,6 +12,7 @@ class UploadsController extends AppController {
     var $uses = array(
         'Upload',
         'Configuration',
+        'Category',
         'Application',
         'Version',
     );
@@ -45,14 +46,13 @@ class UploadsController extends AppController {
 	}
 
     public function update($id = null) {
+        $bad_category = array('Terceros','Temporalmente nada', '');
         if (!$this->Upload->exists($id)) {
             throw new NotFoundException(__('Invalid upload'));
         }
         $ok = true;
-//        var_dump($_SERVER);
         $strSource = $_SERVER['CONTEXT_DOCUMENT_ROOT'] .'poolUpload/';
         $strDest = $_SERVER['CONTEXT_DOCUMENT_ROOT'] .'pool/';
-
         //obtengo la tupla desde upload
         $options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
         $up =  $this->Upload->find('first', $options);
@@ -60,26 +60,27 @@ class UploadsController extends AppController {
 
         //construyo la direccion destino
         if(!is_dir($strDest)){
-            mkdir($strDest, 0777);
+             mkdir($strDest);
+                chgrp($strDest, "www-data");
         }
         $strDest .= $up['Upload']['name'] . '/';
         if(!is_dir($strDest)){
-            mkdir($strDest, 0777);
+            mkdir($strDest);
+                chgrp($strDest, "www-data");
         }
         $strDest .= $up['Upload']['version'] . '/';
         if(!is_dir($strDest)){
-            mkdir($strDest, 0777);
+            mkdir($strDest);
+                chgrp($strDest, "www-data");
         }
         $strDest .= $up['Upload']['name'];
         if(!file_exists($strDest . '.apk')){
             //si no existe el fichero entonces hay que copiarlo
             $moveFail = false;
             if(!copy( $strSource . '.png', $strDest . '.png' ) ){
-//            if(!move_uploaded_file( $strSource . '.png', $strDest . '.png' ) ){
                 $moveFail = true;
             }
             if(!copy( $strSource . '.apk', $strDest . '.apk' ) ){
-//            if(!move_uploaded_file( $strSource . '.apk', $strDest . '.apk' ) ){
                 $moveFail = true;
             }
             //borro los ficheros
@@ -92,6 +93,7 @@ class UploadsController extends AppController {
             $folderId = $strdel . $up['Upload']['name'] . '/';
             rmdir($folderId);
             if(!$moveFail){
+                
                 //ver si este id esta ya en aplication
                 //recoger el de aplicacion
                 $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $up['Upload']['name']));
@@ -106,11 +108,13 @@ class UploadsController extends AppController {
                     $toINsert['Application']['label'] = $up['Upload']['label'];
                     $toINsert['Application']['version'] = $up['Upload']['version'];
                     $toINsert['Application']['code'] = $up['Upload']['code'];
-                    $toINsert['Application']['category'] = $up['Upload']['category'];
+                    $toINsert['Application']['categories_id'] = $up['Upload']['categories_id'];
                     $toINsert['Application']['description'] = $up['Upload']['description'];//esto esta en prueba por ahora pasare null
                     $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                     $toINsert['Application']['downloads'] = 0;
                     $toINsert['Application']['rating'] = 0;
+                    $toINsert['Application']['size'] = $up['Upload']['size'];
+                    $toINsert['Application']['developer'] = $up['Upload']['developer'];
                     $toINsert['Application']['have_data'] = 0;
                     //lo inserto en app sin problema alguna ya que no esta
                     $this->Application->create();
@@ -141,11 +145,13 @@ class UploadsController extends AppController {
                         $toINsert['Version']['label'] = $app['Application']['label'];
                         $toINsert['Version']['version'] = $app['Application']['version'];
                         $toINsert['Version']['code'] = $app['Application']['code'];
-                        $toINsert['Version']['category'] = $app['Application']['category'];
+                        $toINsert['Version']['categories_id'] = $app['Application']['categories_id'];
                         $toINsert['Version']['description'] = $app['Application']['description'];//esto esta en prueba por ahora pasare null
                         $toINsert['Version']['sdkversion'] = $app['Application']['sdkversion'];// esto esta en veremos
                         $toINsert['Version']['downloads'] = $app['Application']['downloads'];
                         $toINsert['Version']['rating'] = $app['Application']['rating'];
+                        $toINsert['Version']['developer'] = $app['Upload']['developer'];
+                        $toINsert['Version']['size'] = $app['Upload']['size'];
                         $toINsert['Version']['have_data'] = $app['Application']['have_data'];
                         $this->Version->create();
                         if ($this->Version->save($toINsert)) {
@@ -155,11 +161,13 @@ class UploadsController extends AppController {
                             $toINsert['Application']['label'] = $up['Upload']['label'];
                             $toINsert['Application']['version'] = $up['Upload']['version'];
                             $toINsert['Application']['code'] = $up['Upload']['code'];
-                            $toINsert['Application']['category'] = $up['Upload']['category'];
+                            $toINsert['Application']['categories_id'] = $up['Upload']['categories_id'];
                             $toINsert['Application']['description'] = $up['Upload']['description'];//esto esta en prueba por ahora pasare null
                             $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Application']['downloads'] = 0;
                             $toINsert['Application']['rating'] = 0;
+                            $toINsert['Application']['size'] = $app['Upload']['size'];
+                            $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Application']['have_data'] = 0;
                             $this->Application->create();
                             if ($this->Application->save($toINsert)) {
@@ -200,11 +208,13 @@ class UploadsController extends AppController {
                             $toINsert['Version']['label'] = $up['Upload']['label'];
                             $toINsert['Version']['version'] = $up['Upload']['version'];
                             $toINsert['Version']['code'] = $up['Upload']['code'];
-                            $toINsert['Version']['category'] = $up['Upload']['category'];
+                            $toINsert['Version']['category'] = $up['Upload']['categories_id'];
                             $toINsert['Version']['description'] = $up['Upload']['description'];//esto esta en prueba por ahora pasare null
                             $toINsert['Version']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Version']['downloads'] = 0;
                             $toINsert['Version']['rating'] = 0;
+                            $toINsert['Version']['size'] = $app['Upload']['size'];
+                            $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Version']['have_data'] = 0;
                             $this->Version->create();
                             if ($this->Version->save($toINsert)) {
@@ -222,16 +232,7 @@ class UploadsController extends AppController {
                                 $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
                             }
                         }
-                    }
-                    //pido toda la info del upload y comparo las versiones
-                    //si la version es mayor, actualizo el registro en app y paso poner en versiones el actual
-                    //si la version es menos, verifico que exista ese codigo con esa version en versions, si no existe lo pongo
-
-                    //muevo en caso de que se agregue al final la app para el pool
-
-                    //elimino el registro de upload
-
-                    //marco la BD como modificada.
+                    }                   
                 }
             }else{
                 //error al copiar loe elemntos
@@ -254,20 +255,6 @@ class UploadsController extends AppController {
             $this->BdHelper->setBDupdatable();
             $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
         }
-
-
-
-
-
-        //recoger el registro oficial
-//        $options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
-//        $up =  $this->Upload->find('first', $options);
-
-
-        //recoger el de version en caso de que no este
-//        $options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
-//        $ver =  $this->Upload->find('first', $options);
-
         return $this->redirect(array('action' => 'index'));
     }
 

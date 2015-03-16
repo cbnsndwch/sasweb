@@ -24,7 +24,7 @@
 		<td><?php echo h($upload['Upload']['label']); ?>&nbsp;</td>
 		<td><?php echo h($upload['Upload']['code']); ?>&nbsp;</td>
         <td><?php echo h($upload['Upload']['version']); ?>&nbsp;</td>
-		<td><?php echo h($upload['Upload']['category']); ?>&nbsp;</td>
+		<td><?php echo h($upload['Category']['name']); ?>&nbsp;</td>
 		<td><?php echo h($upload['Upload']['sdkversion']); ?>&nbsp;</td>
 		<td><?php echo h($upload['Upload']['ip']); ?>&nbsp;</td>
 		<td><?php echo h($upload['Upload']['client']); ?>&nbsp;</td>
