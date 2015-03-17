@@ -24,13 +24,16 @@ class UploadsController extends AppController {
  */
 	public $components = array('BdHelper', 'Paginator', 'Session');
 
-//    public function beforeFilter() {
-//        parent::beforeFilter();
-//        if($this->Auth->user('role') != 'admin'){
-//            $this->Session->setFlash('No está autorizado a consultar esa página.');
-//            return $this->redirect(array('controller' => 'applications', 'action' => 'repo'));
-//        }
-//    }
+public function isAuthorized($user) {
+    $padre = parent::beforeFilter();
+    if($padre){
+        return $padre;
+    }
+    if (($user['role'] == 'uploader' || $user['role'] == 'manager') && $this->action == 'upload') {
+        return true;
+    }
+    return false;
+}
 
 	public function index() {
 		$this->Upload->recursive = 0;
@@ -329,7 +332,7 @@ class UploadsController extends AppController {
 
 
         }else{
-            $this->Session->setFlash("Seleccione la aplicacion a subir");
+           // $this->Session->setFlash("Seleccione la aplicacion a subir");
         }
         $query = 'SELECT DISTINCT Application.category
                  FROM applications as Application';

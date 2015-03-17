@@ -52,6 +52,18 @@ class UsersController extends AppController {
 //        return true;
 //    }
 
+     public function isAuthorized($user) {
+     	if(in_array($this->action, array('changepassword'))){
+     		if($user["id"] != $this->request->params['pass'][0]){
+     			return false;
+     		}else{
+     			return true;
+     		}
+     	}
+
+        parent::beforeFilter();        
+    }
+
     public function login() {
     	$this->layout = null;
         if ($this->request->is('post')) {
@@ -63,6 +75,29 @@ class UsersController extends AppController {
     }
     public function logout() {
         return $this->redirect($this->Auth->logout());
+    }
+
+    public function changepassword($id = null){
+    	if (!$this->User->exists($id)) {
+			throw new NotFoundException(__('Invalid user'));
+		}
+		if ($this->request->is(array('post', 'put'))) {
+			//debug($this->request->data);
+			$this->User->id = $id;
+			if ($this->User->saveField('password' , $this->request->data['User']['password'])) {
+				$this->Session->setFlash(__('La clave fue almacenada con exito.'));
+				unset($this->request->data['User']['password']);
+				return $this->redirect(array('controller' => 'applications', 'action' => 'repo'));
+			} else {
+				$this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+			}
+			unset($this->request->data['User']['password']);
+		} else {
+			$options = array('conditions' => array('User.' . $this->User->primaryKey => $id));
+			$this->request->data = $this->User->find('first', $options);
+			unset($this->request->data['User']['password']);
+    		// unset($this->request->data['User']['pwd_repeat']);
+		}
     }
 /**
  * index method
