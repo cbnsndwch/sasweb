@@ -45,7 +45,7 @@ public function isAuthorized($user) {
         $this->Paginator->settings=array(
             'conditions'=> array('Upload.cotegories != 1')
         );
-        $this->set('uploads', $this->Paginator->paginate();
+        $this->set('uploads', $this->Paginator->paginate());
     }
 
     public function view($id = null) {
