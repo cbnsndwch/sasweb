@@ -153,8 +153,8 @@ public function isAuthorized($user) {
                         $toINsert['Version']['sdkversion'] = $app['Application']['sdkversion'];// esto esta en veremos
                         $toINsert['Version']['downloads'] = $app['Application']['downloads'];
                         $toINsert['Version']['rating'] = $app['Application']['rating'];
-                        $toINsert['Version']['developer'] = $app['Upload']['developer'];
-                        $toINsert['Version']['size'] = $app['Upload']['size'];
+                        $toINsert['Version']['developer'] = $app['Application']['developer'];
+                        $toINsert['Version']['size'] = $app['Application']['size'];
                         $toINsert['Version']['have_data'] = $app['Application']['have_data'];
                         $this->Version->create();
                         if ($this->Version->save($toINsert)) {
