@@ -40,6 +40,14 @@ public function isAuthorized($user) {
         $this->set('uploads', $this->Paginator->paginate());
     }
 
+    public function indexgood() {
+        $this->Upload->recursive = 0;
+        $this->Paginator->settings=array(
+            'conditions'=> array('Upload.cotegories != 1')
+        );
+        $this->set('uploads', $this->Paginator->paginate();
+    }
+
     public function view($id = null) {
         if (!$this->Upload->exists($id)) {
             throw new NotFoundException(__('Invalid upload'));
