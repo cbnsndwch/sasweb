@@ -329,6 +329,8 @@ class GenerateShell  extends AppShell{
                     $cat_id = $this->Category->id;
                     if ($this->Category->save($toINsert)) {                        
                         $this->out($info['category'] . ' Fue agregada con exito a la tabla Categorias.');
+                    }else{
+                        $cat_id = 1;    
                     }
                 }else{
                     $cat_id = 1;
