@@ -93,8 +93,8 @@ public function isAuthorized($user) {
             $strdel = $_SERVER['CONTEXT_DOCUMENT_ROOT'] .'poolUpload/';
             $folderVersion = $strdel . $up['Upload']['name'] . '/' . $up['Upload']['version'] . '/';
             rmdir($folderVersion);
-            $folderId = $strdel . $up['Upload']['name'] . '/';
-            rmdir($folderId);
+            // $folderId = $strdel . $up['Upload']['name'] . '/';
+            // rmdir($folderId);
             if(!$moveFail){
                 
                 //ver si este id esta ya en aplication
