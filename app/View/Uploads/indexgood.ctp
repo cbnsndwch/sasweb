@@ -32,7 +32,7 @@
 			<?php echo $this->Html->link($upload['User']['username'], array('controller' => 'users', 'action' => 'view', $upload['User']['id'])); ?>
 		</td>
 		<td class="actions">
-            <?php echo $this->Html->link(__('Agregar'), array('action' => 'update', $upload['Upload']['id'])); ?>
+            <?php echo $this->Html->link(__('Agregar'), array('action' => 'update', $upload['Upload']['id'], 1)); ?>
             <?php echo $this->Html->link(__('Descargar'), array('action' => 'view', $upload['Upload']['id'])); ?>
 			<?php echo $this->Html->link(__('Ver'), array('action' => 'view', $upload['Upload']['id'])); ?>
 			<?php echo $this->Html->link(__('Editar'), array('action' => 'edit', $upload['Upload']['id'])); ?>

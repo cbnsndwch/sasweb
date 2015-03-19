@@ -56,7 +56,7 @@ public function isAuthorized($user) {
         $this->set('upload', $this->Upload->find('first', $options));
     }
 
-    public function update($id = null) {
+    public function update($id = null, $red = 0) {
         $bad_category = array('Terceros','Temporalmente nada', '');
         if (!$this->Upload->exists($id)) {
             throw new NotFoundException(__('Invalid upload'));
@@ -266,7 +266,10 @@ public function isAuthorized($user) {
             $this->BdHelper->setBDupdatable();
             $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
         }
-        return $this->redirect(array('action' => 'index'));
+        if($red == 0)
+            return $this->redirect(array('action' => 'index'));
+        else
+            return $this->redirect(array('action' => 'indexgood'));
     }
 
     public function upload(){
