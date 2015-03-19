@@ -22,31 +22,31 @@ class UploadsController extends AppController {
  *
  * @var array
  */
-	public $components = array('BdHelper', 'Paginator', 'Session');
+    public $components = array('BdHelper', 'Paginator', 'Session');
 
 public function isAuthorized($user) {
     $padre = parent::beforeFilter();
     if($padre){
-        return $padre;
-    }
-    if (($user['role'] == 'uploader' || $user['role'] == 'manager') && $this->action == 'upload') {
         return true;
     }
+    if (($user['role'] == 'uploader' || $user['role'] == 'manager' ) && $this->action == 'upload') {
+        return true;
+    }else if($user['role'] == 'admin') return true;
     return false;
 }
 
-	public function index() {
-		$this->Upload->recursive = 0;
-		$this->set('uploads', $this->Paginator->paginate());
-	}
+    public function index() {
+        $this->Upload->recursive = 0;
+        $this->set('uploads', $this->Paginator->paginate());
+    }
 
-	public function view($id = null) {
-		if (!$this->Upload->exists($id)) {
-			throw new NotFoundException(__('Invalid upload'));
-		}
-		$options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
-		$this->set('upload', $this->Upload->find('first', $options));
-	}
+    public function view($id = null) {
+        if (!$this->Upload->exists($id)) {
+            throw new NotFoundException(__('Invalid upload'));
+        }
+        $options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
+        $this->set('upload', $this->Upload->find('first', $options));
+    }
 
     public function update($id = null) {
         $bad_category = array('Terceros','Temporalmente nada', '');
@@ -304,7 +304,7 @@ public function isAuthorized($user) {
                             'label' => $info['label'],
                             'version' => $info['version'],
                             'code' => $info['code'],
-                            'category' => (empty($_POST['category']))?"Terceros": $_POST['category'] ,
+                            'categories_id' => (empty($_POST['category']))?1: $_POST['category'] ,
                             'description' => (empty($_POST['description']))?"Sin definir": $_POST['description'],
                             'sdkversion' => $info['sdk'],
                             'icon' => $info['icon'],
@@ -334,10 +334,11 @@ public function isAuthorized($user) {
         }else{
            // $this->Session->setFlash("Seleccione la aplicacion a subir");
         }
-        $query = 'SELECT DISTINCT Application.category
-                 FROM applications as Application';
-        $cats = $this->Application->query($query);
+        // $query = 'SELECT DISTINCT Application.category
+        //          FROM applications as Application';
+        // $cats = $this->Application->query($query);
 //        var_dump($cats[0]['Application']["category"]);
+        $cats = $this->Category->find("all", array());
         $this->set("categories", $cats);
 
         
@@ -414,50 +415,50 @@ public function isAuthorized($user) {
  *
  * @return void
  */
-	public function add() {
-		if ($this->request->is('post')) {
-			$this->Upload->create();
-			if ($this->Upload->save($this->request->data)) {
-				$this->Session->setFlash(__('The upload has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
-			}
-		}
-		$users = $this->Upload->User->find('list');
-		$this->set(compact('users'));
-	}
+    public function add() {
+        if ($this->request->is('post')) {
+            $this->Upload->create();
+            if ($this->Upload->save($this->request->data)) {
+                $this->Session->setFlash(__('The upload has been saved.'));
+                return $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
+            }
+        }
+        $users = $this->Upload->User->find('list');
+        $this->set(compact('users'));
+    }
 
-	public function edit($id = null) {
-		if (!$this->Upload->exists($id)) {
-			throw new NotFoundException(__('Invalid upload'));
-		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Upload->save($this->request->data)) {
-				$this->Session->setFlash(__('The upload has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
-			$this->request->data = $this->Upload->find('first', $options);
-		}
-		$users = $this->Upload->User->find('list');
-		$this->set(compact('users'));
-	}
+    public function edit($id = null) {
+        if (!$this->Upload->exists($id)) {
+            throw new NotFoundException(__('Invalid upload'));
+        }
+        if ($this->request->is(array('post', 'put'))) {
+            if ($this->Upload->save($this->request->data)) {
+                $this->Session->setFlash(__('The upload has been saved.'));
+                return $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
+            }
+        } else {
+            $options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
+            $this->request->data = $this->Upload->find('first', $options);
+        }
+        $users = $this->Upload->User->find('list');
+        $this->set(compact('users'));
+    }
 
-	public function delete($id = null) {
-		$this->Upload->id = $id;
-		if (!$this->Upload->exists()) {
-			throw new NotFoundException(__('Invalid upload'));
-		}
-		$this->request->allowMethod('post', 'delete');
-		if ($this->Upload->delete()) {
-			$this->Session->setFlash(__('The upload has been deleted.'));
-		} else {
-			$this->Session->setFlash(__('The upload could not be deleted. Please, try again.'));
-		}
-		return $this->redirect(array('action' => 'index'));
-	}
+    public function delete($id = null) {
+        $this->Upload->id = $id;
+        if (!$this->Upload->exists()) {
+            throw new NotFoundException(__('Invalid upload'));
+        }
+        $this->request->allowMethod('post', 'delete');
+        if ($this->Upload->delete()) {
+            $this->Session->setFlash(__('The upload has been deleted.'));
+        } else {
+            $this->Session->setFlash(__('The upload could not be deleted. Please, try again.'));
+        }
+        return $this->redirect(array('action' => 'index'));
+    }
 }

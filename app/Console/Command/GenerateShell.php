@@ -147,7 +147,7 @@ class GenerateShell  extends AppShell{
                             'code' => $info['code'],
                             'size' => $info['size'],
                             'verificate' => 0,
-                            'users_id' => 1,
+                            'user_id' => 1,
                             'sdkversion' =>$info['sdk'],
                             'have_data' => 0
                         )
@@ -194,7 +194,7 @@ class GenerateShell  extends AppShell{
             // var_dump($info);die();
             //verificar qeu la categoria existe
             $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
-            $cat_id = 0;
+            $cat_id = 1;
             if (!isset($noesta['Category'])) {       
                 //verifico que no sea una de las palabras qeu no puede ir
                 if(!in_array($info['category'], $bad_category)){                       
@@ -254,7 +254,7 @@ class GenerateShell  extends AppShell{
             // var_dump($info);die();
             //verificar qeu la categoria existe
             $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
-            $cat_id = 0;
+            $cat_id = 1;
             if (!isset($noesta['Category'])) {                 
                 //verifico que no sea una de las palabras qeu no puede ir
                 if(!in_array($info['category'], $bad_category)){                       
@@ -314,7 +314,7 @@ class GenerateShell  extends AppShell{
             // var_dump($info);die();
             //verificar qeu la categoria existe
             $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
-            $cat_id = 0;
+            $cat_id = 1;
             if (!isset($noesta['Category'])) {               
                 //verifico que no sea una de las palabras qeu no puede ir
                 if(!in_array($info['category'], $bad_category)){                       
