@@ -43,7 +43,7 @@ public function isAuthorized($user) {
     public function indexgood() {
         $this->Upload->recursive = 0;
         $this->Paginator->settings=array(
-            'conditions'=> array('Upload.cotegories != 1')
+            'conditions'=> array('Upload.categories_id != 1')
         );
         $this->set('uploads', $this->Paginator->paginate());
     }
