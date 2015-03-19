@@ -216,7 +216,7 @@ public function isAuthorized($user) {
                             $toINsert['Version']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Version']['downloads'] = 0;
                             $toINsert['Version']['rating'] = 0;
-                            $toINsert['Version']['size'] = $app['Upload']['size'];
+                            $toINsert['Version']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Version']['have_data'] = 0;
                             $this->Version->create();
