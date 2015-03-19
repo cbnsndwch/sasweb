@@ -195,7 +195,7 @@ class GenerateShell  extends AppShell{
             //verificar qeu la categoria existe
             $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
             $cat_id = 0;
-            if (!$noesta) {                    
+            if (!$noesta['Category']) {                    
                 //verifico que no sea una de las palabras qeu no puede ir
                 if(!in_array($info['category'], $bad_category)){                       
                     //sino es una mala palabra la inserto
@@ -255,7 +255,7 @@ class GenerateShell  extends AppShell{
             //verificar qeu la categoria existe
             $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
             $cat_id = 0;
-            if (!$noesta) {                    
+            if (!$noesta['Category']) {                    
                 //verifico que no sea una de las palabras qeu no puede ir
                 if(!in_array($info['category'], $bad_category)){                       
                     //sino es una mala palabra la inserto
@@ -315,7 +315,7 @@ class GenerateShell  extends AppShell{
             //verificar qeu la categoria existe
             $noesta = $this->Category->find('first', array('conditions'=>array('Category.name' => $info['category'])));
             $cat_id = 0;
-            if (!$noesta) {                    
+            if (!$noesta['Category']) {                   
                 //verifico que no sea una de las palabras qeu no puede ir
                 if(!in_array($info['category'], $bad_category)){                       
                     //sino es una mala palabra la inserto
