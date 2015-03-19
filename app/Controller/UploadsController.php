@@ -169,7 +169,7 @@ public function isAuthorized($user) {
                             $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Application']['downloads'] = 0;
                             $toINsert['Application']['rating'] = 0;
-                            $toINsert['Application']['size'] = $app['Upload']['size'];
+                            $toINsert['Application']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Application']['have_data'] = 0;
                             $this->Application->create();
