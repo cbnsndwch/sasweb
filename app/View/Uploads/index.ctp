@@ -1,6 +1,13 @@
-<div class="uploads index">
-	<h2><?php echo __('Uploads'); ?></h2>
-	<table cellpadding="0" cellspacing="0">
+
+<div class="row-fluid" >
+        <div class="col-lg-10">
+            <h2 class="page-header"><?php echo __('Subidas'); ?></h2>
+        </div>        
+    </div>
+     <hr/>
+
+<div class="row-fluid" >
+	<table class="table table-condensed table-striped">
 	<thead>
 	<tr>
             <th><?php echo 'image'; ?></th>
@@ -8,8 +15,6 @@
 			<th><?php echo $this->Paginator->sort('code'); ?></th>
             <th><?php echo $this->Paginator->sort('version'); ?></th>
 			<th><?php echo $this->Paginator->sort('category'); ?></th>
-			<th><?php echo $this->Paginator->sort('sdkversion'); ?></th>
-			<th><?php echo $this->Paginator->sort('ip'); ?></th>
 			<th><?php echo $this->Paginator->sort('client'); ?></th>
 			<th><?php echo $this->Paginator->sort('user_id'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -25,19 +30,17 @@
 		<td><?php echo h($upload['Upload']['code']); ?>&nbsp;</td>
         <td><?php echo h($upload['Upload']['version']); ?>&nbsp;</td>
 		<td><?php echo h($upload['Category']['name']); ?>&nbsp;</td>
-		<td><?php echo h($upload['Upload']['sdkversion']); ?>&nbsp;</td>
-		<td><?php echo h($upload['Upload']['ip']); ?>&nbsp;</td>
 		<td><?php echo h($upload['User']['name']); ?>&nbsp;</td>
 		<td><?php echo h($upload['User']['name']); ?>&nbsp;</td>
 		<td>
 			<?php echo $this->Html->link($upload['User']['username'], array('controller' => 'users', 'action' => 'view', $upload['User']['id'])); ?>
 		</td>
 		<td class="actions">
-            <?php echo $this->Html->link(__('Agregar'), array('action' => 'update', $upload['Upload']['id'])); ?>
-            <?php echo $this->Html->link(__('Descargar'), array('action' => 'view', $upload['Upload']['id'])); ?>
-			<?php echo $this->Html->link(__('Ver'), array('action' => 'view', $upload['Upload']['id'])); ?>
-			<?php echo $this->Html->link(__('Editar'), array('action' => 'edit', $upload['Upload']['id'])); ?>
-			<?php echo $this->Form->postLink(__('Eliminar'), array('action' => 'delete', $upload['Upload']['id']), array(), __('Are you sure you want to delete # %s?', $upload['Upload']['id'])); ?>
+            <?php echo $this->Html->link(__('Agregar'), array('action' => 'update', $upload['Upload']['id']), array('class' => 'btn')); ?>
+            <?php echo $this->Html->link(__('Descargar'), array('action' => 'view', $upload['Upload']['id']), array('class' => 'btn')); ?>
+			<?php echo $this->Html->link(__('Ver'), array('action' => 'view', $upload['Upload']['id']), array('class' => 'btn')); ?>
+			<?php echo $this->Html->link(__('Editar'), array('action' => 'edit', $upload['Upload']['id']), array('class' => 'btn')); ?>
+			<?php echo $this->Form->postLink(__('Eliminar'), array('action' => 'delete', $upload['Upload']['id']), array('class' => 'btn'), __('Are you sure you want to delete # %s?', $upload['Upload']['id'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
