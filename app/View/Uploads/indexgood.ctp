@@ -1,5 +1,18 @@
-<div class="uploads index">
-	<h2><?php echo __('Uploads'); ?></h2>
+
+<div class="row-fluid" >
+        <div class="col-lg-10">
+            <h2 class="page-header"><?php echo __('Subidas'); ?></h2>
+        </div>        
+    </div>
+     <hr/>
+
+<div class="row-fluid" >
+	<?php echo $this->Html->link(__('Aceptar todas'), array('action' => 'updateall', 1), array('class' => 'btn btn-primary')); ?>
+</div>
+<hr/>
+
+<div class="row-fluid" >
+	
 	<table cellpadding="0" cellspacing="0">
 	<thead>
 	<tr>

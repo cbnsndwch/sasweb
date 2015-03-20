@@ -57,6 +57,33 @@ public function isAuthorized($user) {
     }
 
     public function update($id = null, $red = 0) {
+        $result = $this->updateInternal($id,$red);
+        $this->Session->setFlash($result);
+
+        if($red == 0)
+            return $this->redirect(array('action' => 'index'));
+        else
+            return $this->redirect(array('action' => 'indexgood'));
+    }
+
+    public function updateall($red = 0) {
+
+         $apps = $this->Upload->find("all", array('conditions' => array('Upload.categories_id != 1')));
+         $result = "Todo ok.";
+         // debug($apps);
+         foreach ($apps as $app) {
+            //debug($app['Upload']['name']);
+            $result = $this->updateInternal($app['Upload']['id'],$red);
+         }
+         $this->Session->setFlash($result);
+
+        if($red == 0)
+            return $this->redirect(array('action' => 'index'));
+        else
+            return $this->redirect(array('action' => 'indexgood'));
+    }
+
+    private function updateInternal($id = null, $red = 0) {
         $bad_category = array('Terceros','Temporalmente nada', '');
         if (!$this->Upload->exists($id)) {
             throw new NotFoundException(__('Invalid upload'));
@@ -124,6 +151,7 @@ public function isAuthorized($user) {
                     $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                     $toINsert['Application']['downloads'] = 0;
                     $toINsert['Application']['rating'] = 0;
+                    $toINsert['Application']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
                     $toINsert['Application']['size'] = $up['Upload']['size'];
                     $toINsert['Application']['developer'] = $up['Upload']['developer'];
                     $toINsert['Application']['have_data'] = 0;
@@ -134,14 +162,14 @@ public function isAuthorized($user) {
                         $this->Upload->id = $id;
                         if ($this->Upload->delete()) {
                             $this->BdHelper->setBDupdatable();
-                            $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
+                            return (__('La nueva aplicación ha sido agregada con éxito.'));
                         } else {
                             $ok = false;
-                            $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                            return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
                         }
                     }else{
                         $ok = false;
-                        $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                        return (__('La nueva aplicación no ha sido agregada.'));
                     }
 
                 }else{//si esta en app, verifico los codigos y si es mayor actualizo sino voy para versiones
@@ -162,6 +190,7 @@ public function isAuthorized($user) {
                         $toINsert['Version']['downloads'] = $app['Application']['downloads'];
                         $toINsert['Version']['rating'] = $app['Application']['rating'];
                         $toINsert['Version']['developer'] = $app['Application']['developer'];
+                        $toINsert['Version']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
                         $toINsert['Version']['size'] = $app['Application']['size'];
                         $toINsert['Version']['have_data'] = $app['Application']['have_data'];
                         $this->Version->create();
@@ -177,6 +206,7 @@ public function isAuthorized($user) {
                             $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Application']['downloads'] = 0;
                             $toINsert['Application']['rating'] = 0;
+                            $toINsert['Application']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
                             $toINsert['Application']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Application']['have_data'] = 0;
@@ -186,18 +216,18 @@ public function isAuthorized($user) {
                                 $this->Upload->id = $id;
                                 if ($this->Upload->delete()) {
                                     $this->BdHelper->setBDupdatable();
-                                    $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
+                                    return (__('La nueva aplicación ha sido agregada con éxito.'));
                                 } else {
                                     $ok = false;
-                                    $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                                    return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
                                 }
                             }else{
                                 $ok = false;
-                                $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                                return (__('La nueva aplicación no ha sido agregada.'));
                             }
                         }else{
                             $ok = false;
-                            $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                            return (__('La nueva aplicación no ha sido agregada.'));
                         }
 
 
@@ -227,6 +257,7 @@ public function isAuthorized($user) {
                             $toINsert['Version']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Version']['have_data'] = 0;
+                            $toINsert['Version']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
                             $this->Version->create();
                             if ($this->Version->save($toINsert)) {
                                 //luego de insertado lo elimino de upload
@@ -236,18 +267,19 @@ public function isAuthorized($user) {
                                     $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
                                 } else {
                                     $ok = false;
-                                    $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                                    return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
                                 }
                             }else{
                                 $ok = false;
-                                $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                                return (__('La nueva aplicación no ha sido agregada.'));
                             }
                         }
                     }                   
                 }
             }else{
                 //error al copiar loe elemntos
-                $this->Session->setFlash(__('No ha podido ser copiada la aplicación a su carpeta destino, verifique y los permisos de escritura y vuelva a intentarlo.'));
+                $ok = false;
+                return (__('No ha podido ser copiada la aplicación a su carpeta destino, verifique y los permisos de escritura y vuelva a intentarlo.'));
             }
 
         }else{
@@ -256,20 +288,17 @@ public function isAuthorized($user) {
             $ok = false;
             $this->Upload->id = $id;
             if ($this->Upload->delete()) {
-                $this->Session->setFlash(__('La aplicación ya existia, se ha eliminado el registro.'));
+                return (__('La aplicación ya existia, se ha eliminado el registro.'));
             } else {
-                $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
             }
         }
         if($ok){
             //Actualizo la info de configuracion
             $this->BdHelper->setBDupdatable();
-            $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
+            return (__('La nueva aplicación ha sido agregada con éxito.'));
         }
-        if($red == 0)
-            return $this->redirect(array('action' => 'index'));
-        else
-            return $this->redirect(array('action' => 'indexgood'));
+        
     }
 
     public function upload(){
