@@ -151,7 +151,7 @@ public function isAuthorized($user) {
                     $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                     $toINsert['Application']['downloads'] = 0;
                     $toINsert['Application']['rating'] = 0;
-                    $toINsert['Application']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
+                    $toINsert['Application']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
                     $toINsert['Application']['size'] = $up['Upload']['size'];
                     $toINsert['Application']['developer'] = $up['Upload']['developer'];
                     $toINsert['Application']['have_data'] = 0;
@@ -190,7 +190,7 @@ public function isAuthorized($user) {
                         $toINsert['Version']['downloads'] = $app['Application']['downloads'];
                         $toINsert['Version']['rating'] = $app['Application']['rating'];
                         $toINsert['Version']['developer'] = $app['Application']['developer'];
-                        $toINsert['Version']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
+                        $toINsert['Version']['verificate'] = ($app['Application']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
                         $toINsert['Version']['size'] = $app['Application']['size'];
                         $toINsert['Version']['have_data'] = $app['Application']['have_data'];
                         $this->Version->create();
@@ -206,7 +206,7 @@ public function isAuthorized($user) {
                             $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Application']['downloads'] = 0;
                             $toINsert['Application']['rating'] = 0;
-                            $toINsert['Application']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
+                            $toINsert['Application']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
                             $toINsert['Application']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Application']['have_data'] = 0;
@@ -257,7 +257,7 @@ public function isAuthorized($user) {
                             $toINsert['Version']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Version']['have_data'] = 0;
-                            $toINsert['Version']['verificate'] = 1;//Si yo soy el que estoy agregandola es que yo la verifique
+                            $toINsert['Version']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
                             $this->Version->create();
                             if ($this->Version->save($toINsert)) {
                                 //luego de insertado lo elimino de upload

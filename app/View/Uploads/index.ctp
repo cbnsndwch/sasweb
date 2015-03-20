@@ -1,10 +1,15 @@
 
-<div class="row-fluid" >
+	<div class="row-fluid" >
         <div class="col-lg-10">
             <h2 class="page-header"><?php echo __('Subidas'); ?></h2>
         </div>        
     </div>
      <hr/>
+
+	<div class="row-fluid" >
+		<?php echo $this->Html->link(__('Aceptar todas'), array('action' => 'updateall', 0), array('class' => 'btn btn-primary')); ?>
+	</div>
+	<hr/>
 
 <div class="row-fluid" >
 	<table class="table table-condensed table-striped">
@@ -30,6 +35,8 @@
 		<td><?php echo h($upload['Upload']['code']); ?>&nbsp;</td>
         <td><?php echo h($upload['Upload']['version']); ?>&nbsp;</td>
 		<td><?php echo h($upload['Category']['name']); ?>&nbsp;</td>
+		<td><?php echo h($upload['Upload']['sdkversion']); ?>&nbsp;</td>
+		<td><?php echo h($upload['Upload']['ip']); ?>&nbsp;</td>
 		<td><?php echo h($upload['User']['name']); ?>&nbsp;</td>
 		<td><?php echo h($upload['User']['name']); ?>&nbsp;</td>
 		<td>

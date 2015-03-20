@@ -152,11 +152,16 @@ class ApplicationsController extends AppController {
         $limit = 6;
         //pido la configuracion
         $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
-
+        //este es la cantidad de dias pasados que se cogeran para calcular los nuevos, esto debe estar en la tabla de conf o del usuario
+        $dayToNew = $config["Configuration"]['days_to_new'];
+        $date = date_create('now');
+        date_sub($date, date_interval_create_from_date_string($dayToNew . ' days'));
+        // var_dump($date->format('Y-m-d H:i:s'));
+        //  var_dump($date);
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array(
-                'Application.created >= "' . $config['Configuration']['last_db_update'] . '"' ,
+                'Application.created >= "' . $date->format('Y-m-d H:i:s') . '"' ,
                 ),
             'order' => array(
                 'Application.label' => 'asc'
