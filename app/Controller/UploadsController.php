@@ -82,7 +82,7 @@ public function isAuthorized($user) {
 
     public function updateall() {
 
-         $apps = $this->Upload->find("all", array('conditions' => array('Upload.categories_id == 1')));
+         $apps = $this->Upload->find("all", array('conditions' => array('Upload.categories_id' => 1)));
          $result = "Todo ok.";
          // debug($apps);
          foreach ($apps as $app) {
