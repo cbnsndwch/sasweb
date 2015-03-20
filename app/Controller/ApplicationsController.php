@@ -9,7 +9,7 @@ App::uses('AppController', 'Controller');
  */
 class ApplicationsController extends AppController {
 
-    var $uses = array('Application', 'Version', 'Apk', 'History', 'Category','Configuration', 'Coment');
+    var $uses = array('Application', 'Version', 'Apk', 'Generalcoment', 'History', 'Category','Configuration', 'Coment');
 /**
  * Components
  *
@@ -30,6 +30,7 @@ class ApplicationsController extends AppController {
             'repoverificate',
             'comments',
             'addcomment',
+            'generalcomments',
             'detail',
             'downloadApp',
             'downloadVersion'
@@ -106,6 +107,44 @@ class ApplicationsController extends AppController {
 
              $this->redirect(array('action' => 'comments',$id));
         }
+    }
+
+    public function generalcomments(){
+        $this->set('title_for_layout','Comentarios sobre Sas');
+
+        // $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $id));
+        // $this->Application->recursive = 2;
+        // $apk = $this->Application->find('first', $options);   
+        // //var_dump($apk);
+        // $this->set('coments', $apk);
+        
+    }
+
+    public function addgeneralcomment($id = null){
+        
+        $coment = $_POST['coment'];
+
+        $insert = array(
+            'Generalcoment' => array(
+                    'ip' => $this->request->clientIp(),
+                    'coment' => $coment,
+                    'client' => 'web'
+
+                )
+            );
+        
+        if($this->Auth->loggedIn())
+            $insert['Generalcoment']['usertag'] = $this->Auth->user()['hash'];//por ahora luego aqui poner id
+
+        $this->Generalcoment->create();
+        if($this->Generalcoment->save($insert)){
+           //$this->Session->setFlash(__('Se ha almacenado el comentario con exito.'));
+        }else{
+           // $this->Session->setFlash(__('No se pudo almacenar el comentario.'));
+        }
+
+         $this->redirect(array('action' => 'generalcomments'));
+        
     }
 
 

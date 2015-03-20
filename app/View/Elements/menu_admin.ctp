@@ -40,6 +40,8 @@
                 </ul>
             </li>
 
+            <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/generalcomments/"><i class="icon-list-alt"></i><span class="hidden-tablet"> Comentarios</span></a></li>
+
 
      <!--       <li><a href="form.html"><i class="icon-edit"></i><span class="hidden-tablet"> Forms</span></a></li>
             <li><a href="chart.html"><i class="icon-list-alt"></i><span class="hidden-tablet"> Charts</span></a></li>
