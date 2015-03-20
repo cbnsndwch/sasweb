@@ -28,7 +28,9 @@
                 </ul>
             </li>
 
+            <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/uploads/index"><i class="icon-list-alt"></i><span class="hidden-tablet"> Verificar Subidos</span></a></li>
 
+            <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/uploads/upload"><i class="icon-list-alt"></i><span class="hidden-tablet"> Subir Apk</span></a></li>
 
 
      <!--       <li><a href="form.html"><i class="icon-edit"></i><span class="hidden-tablet"> Forms</span></a></li>

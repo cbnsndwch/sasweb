@@ -28,6 +28,7 @@
 		<td><?php echo h($upload['Upload']['sdkversion']); ?>&nbsp;</td>
 		<td><?php echo h($upload['Upload']['ip']); ?>&nbsp;</td>
 		<td><?php echo h($upload['User']['name']); ?>&nbsp;</td>
+		<td><?php echo h($upload['User']['name']); ?>&nbsp;</td>
 		<td>
 			<?php echo $this->Html->link($upload['User']['username'], array('controller' => 'users', 'action' => 'view', $upload['User']['id'])); ?>
 		</td>
