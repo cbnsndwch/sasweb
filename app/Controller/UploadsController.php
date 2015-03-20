@@ -66,21 +66,31 @@ public function isAuthorized($user) {
             return $this->redirect(array('action' => 'indexgood'));
     }
 
-    public function updateall($red = 0) {
+    public function updateallOk() {
 
          $apps = $this->Upload->find("all", array('conditions' => array('Upload.categories_id != 1')));
          $result = "Todo ok.";
          // debug($apps);
          foreach ($apps as $app) {
             //debug($app['Upload']['name']);
-            $result = $this->updateInternal($app['Upload']['id'],$red);
+            $result = $this->updateInternal($app['Upload']['id'],1);
          }
          $this->Session->setFlash($result);
 
-        if($red == 0)
-            return $this->redirect(array('action' => 'index'));
-        else
-            return $this->redirect(array('action' => 'indexgood'));
+         return $this->redirect(array('action' => 'indexgood'));
+    }
+
+    public function updateall() {
+
+         $apps = $this->Upload->find("all", array('conditions' => array('Upload.categories_id == 1')));
+         $result = "Todo ok.";
+         // debug($apps);
+         foreach ($apps as $app) {
+            //debug($app['Upload']['name']);
+            $result = $this->updateInternal($app['Upload']['id'],0);
+         }
+         $this->Session->setFlash($result);
+        return $this->redirect(array('action' => 'index'));
     }
 
     private function updateInternal($id = null, $red = 0) {

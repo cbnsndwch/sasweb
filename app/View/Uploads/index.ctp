@@ -7,7 +7,7 @@
      <hr/>
 
 	<div class="row-fluid" >
-		<?php echo $this->Html->link(__('Aceptar todas'), array('action' => 'updateall', 0), array('class' => 'btn btn-primary')); ?>
+		<?php echo $this->Html->link(__('Aceptar todas'), array('action' => 'updateall'), array('class' => 'btn btn-primary')); ?>
 	</div>
 	<hr/>
 
