@@ -266,7 +266,7 @@
                     <h2>
                         <i class="halflings-icon th"></i>
                         <span class="break"></span>
-                        Similares
+                        En la misma categoría
                     </h2>
                     <div class="box-icon">
                         <a class="btn-minimize" href="#">

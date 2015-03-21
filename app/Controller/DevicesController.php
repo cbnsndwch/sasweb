@@ -611,7 +611,7 @@ class DevicesController  extends AppController {
         $label = $file['Apk']['label'];
         $params = array(
             'id'        => '',
-            'name'      => $label . '.apk',
+            'name'      => $label 
             'extension' => 'apk',
             'mimeType'  => 'application/vnd.android.package-archive',
             'path'  =>   'webroot' . DS . 'pool' . DS . $id . DS . $file['Apk']['version'] . DS . $id  .'.apk',
