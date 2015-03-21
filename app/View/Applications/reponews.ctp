@@ -78,9 +78,9 @@
             <div class="number">
                 <?php echo h($apk['Application']['downloads']);?>
 
-                <?php $var =  $this->HTML->url(array('controller'=>'applications', 'action' => 'downloadsloadApp',$apk['Application']['id']));?>
-
-                <a class="arrow" href="javascript:void(null);" onclick="down('<?php echo $var;?>');" ><i class="icon-arrow-down"></i></a>
+                <a class="arrow" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp/' . $apk['Application']['id'];?>/">
+                    <i class="icon-arrow-down"></i>
+                </a>
             </div>
             <div class="title2">descargas</div>
             <div class="footer">
@@ -96,7 +96,7 @@
     <div class="clearfix"></div>
 	<div class="row-fluid">
         <div class="span12">
-            <div class="dataTables_info ">
+            <div class="dataTables_info  text-center">
             	<small><?php
             	echo $this->Paginator->counter(array(
             	'format' => __('Pagina {:page} de {:pages},

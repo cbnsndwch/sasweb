@@ -127,14 +127,29 @@
     <div id="content" class="span10">
 
 
-    <ul class="breadcrumb">
+    <!--<ul class="breadcrumb">
         <li>
             <i class="icon-home"></i>
             <a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repo">Inicio</a>
             <i class="icon-angle-right"></i>
         </li>
         <li><a href="#"><?php echo $title_for_layout; ?></a></li>
-    </ul>
+    </ul> -->
+    <div class="breadcrumb hidden-phone ">
+        <h3>Descarga la versión móvil de SAS y accede directamente desde tu dispositivo
+        <a  href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/downloadApp/cu.chendroid.sas">
+            <img height="40px" width="30px" src="/sas/img/layout/ic_launcher.png">            
+        </a>
+        </h3>
+    </div>
+    <div class="breadcrumb hidden-tablet hidden-desktop">
+        <h3>Versión móvil de SAS 
+        <a  href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/downloadApp/cu.chendroid.sas">
+            <img height="40px" width="30px" src="/sas/img/layout/ic_launcher.png">            
+        </a>
+        </h3>
+    </div>
+
     <div class="row-fluid">
         <?php echo $this->Session->flash();
               echo $this->Session->flash('auth');
@@ -149,7 +164,7 @@
     <!-- end: Content -->
     </div><!--/#content.span10-->   
 </div><!--/fluid-row-->
-
+</div>
 <div class="modal hide fade" id="myModal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
@@ -166,10 +181,10 @@
 
 <div class="clearfix"></div>
 
-<footer>
+<footer >
 
     <p>
-        <span style="text-align:left;float:left">&copy; 2014 <a href="http://android.cujae.edu.cu/" alt="Bootstrap_Metro_Dashboard">Simple Android Store</a></span>
+        <span style="text-align:left;float:left">&copy; 2015 <a href="http://android.cujae.edu.cu/sas/" alt="Dirección de Soluciones Informáticas">Dirección de Soluciones Informáticas. Cujae.</a></span>
 
     </p>
 
