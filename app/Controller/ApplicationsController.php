@@ -33,6 +33,7 @@ class ApplicationsController extends AppController {
             'generalcomments',
             'detail',
             'downloadApp',
+            'downloadData',
             'downloadVersion'
         );
         $this->Paginator->settings=array(
@@ -341,6 +342,44 @@ class ApplicationsController extends AppController {
         $this->Application->recursive = 0;
         $this->set('apks', $this->Paginator->paginate());
         $this->set('search',$search);
+    }
+
+    public function downloadData($id = null){
+        if (!$this->Application->exists($id)) {
+            throw new NotFoundException(__('Invalid apk'));
+        }
+        $label = $id;
+        $this->layout = null;
+        $this->viewClass = 'Media';
+        $file = $this->Application->find('first',array('conditions'=>array('Application.id'=>$id)));
+        $label = $file['Application']['label'];
+        $params = array(
+            'id'        => '',
+            'name'      => $label ,
+            'extension' => 'zip',
+            'mimeType'  => 'application/zip',
+            'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.zip',
+            'download'=>true
+        );
+        $this->response->type('application/vnd.android.package-archive');
+        $this->set($params);
+    }
+
+    public function verificateData($id = null){
+        if (!$this->Application->exists($id)) {
+            throw new NotFoundException(__('Invalid apk'));
+        }
+        $strDest = $_SERVER['CONTEXT_DOCUMENT_ROOT'] .'pool' . DS;
+        $file = $this->Application->find('first',array('conditions'=>array('Application.id'=>$id)));
+        $strDest .= $file['Application']['id'] . DS . $file['Application']['version'] . DS . $file['Application']['id'] . '.zip';        
+        if(file_exists($strDest)){
+            //los datos estan ok
+            $this->Application->id = $id;
+            $this->Application->saveField('have_data', 1);
+        }else{
+            $this->Session->setFlash('Antes de activar los datos debe colocar lel archivo .zip en la carpeta correcta. Esta version no incluye el control automatico de los datos.');
+        }
+        return $this->redirect(array('action' => 'detail', $id));
     }
 
     public function downloadApp($id = null){

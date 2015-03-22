@@ -48,6 +48,14 @@
                         <tbody>
                             <tr>
                                 <td>
+                                    Id:
+                                </td>
+                                <td>
+                                    <?php echo h($apk['Application']['id']);?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
                                     Versión:
                                 </td>
                                 <td>
@@ -95,6 +103,20 @@
                                     ?>
                                 </td>
                             </tr> 
+                            <?php if ($apk['Application']['have_data'] == 1): ?>
+                                <tr>
+                                    <td>
+                                        Datos:
+                                    </td>
+                                    <td>                                        
+                                        <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadData' . '/' . $apk['Application']['id'];?>/">
+                                            <i class="halflings-icon white download-alt"></i>
+                                        </a>
+
+                                    </td>
+                                </tr> 
+                            <?php endif; ?>
+
                             <?php //if ($apk['Application']['verificate'] == 1): ?>
                                 <tr>
                                     <td>
@@ -132,6 +154,18 @@
                            
                             <!-- Zona de Manager y admins por ahora solo admins-->
                              <?php if ($isadmin): ?>
+
+                                <?php if ($apk['Application']['have_data'] == 0): ?>
+                                    <tr>
+                                        <td>Activar Datos</td>
+                                        <td class="actions">
+                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificateData' . '/' . $apk['Application']['id'];?>/">
+                                                <i class="halflings-icon white flag"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+
                                 <?php if ($apk['Application']['verificate'] == 0): ?>
                                     <tr>
                                         <td>Verificar</td>

@@ -79,8 +79,8 @@
                 <?php echo h($apk['Application']['downloads']);?>
 
                 <a class="arrow" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp/' . $apk['Application']['id'];?>/">
-                                        <i class="icon-arrow-down"></i>
-                                    </a>
+                    <i class="icon-arrow-down"></i>
+                </a>
             </div>
             <div class="title2">descargas</div>
             <div class="footer">
