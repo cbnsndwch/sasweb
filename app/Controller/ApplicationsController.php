@@ -361,7 +361,7 @@ class ApplicationsController extends AppController {
             'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.zip',
             'download'=>true
         );
-        $this->response->type('application/vnd.android.package-archive');
+        $this->response->type('application/zip');
         $this->set($params);
     }
 
