@@ -482,7 +482,7 @@ class GenerateShell  extends AppShell{
         //     }
 
         // }
-        // $apks_added .= " ...";
+        // / $apks_added .= " ...";
 
 
         //Copiar la BD desde update a index paraque los usuarios puedan descargarla
@@ -490,15 +490,15 @@ class GenerateShell  extends AppShell{
         copy($source, $destiny);
 
         //poner noticia que solicite a los usuarios que recarguen la BD para ver las aplicaciones nuevas.
-        $notice = array(
-            'Noticy' => array(
-                'title' => 'Actualizacion',
-                'body' => 'Existen nuevas aplicaciones en el servidor, recargue desde su dispositivo android (usando configuracion->Recargar BD desde el servidor) o visite nuestro sitio. \v' . $apks_added,
-                'user_id' => 1,
-            )
-        );
-        $this->Noticy->create();
-        $this->Noticy->save($notice);
+        // $notice = array(
+        //     'Noticy' => array(
+        //         'title' => 'Actualizacion',
+        //         'body' => 'Existen nuevas aplicaciones en el servidor, recargue desde su dispositivo android (usando configuracion->Recargar BD desde el servidor) o visite nuestro sitio. \v' . $apks_added,
+        //         'user_id' => 1,
+        //     )
+        // );
+        // $this->Noticy->create();
+        // $this->Noticy->save($notice);
         //Actualizar la BD con la fecha actual
         $config['Configuration']['bd_update'] = 0;
         $config['Configuration']['last_db_update'] = date('Y-m-d H:i:s');
