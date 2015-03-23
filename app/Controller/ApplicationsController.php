@@ -15,7 +15,7 @@ class ApplicationsController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator', 'Session','DebugKit.Toolbar');
+	public $components = array('Paginator', 'Session');//,'DebugKit.Toolbar'
 
     public function beforeFilter(){
         parent::beforeFilter();
