@@ -18,13 +18,13 @@
             <li>
                 <a class="dropmenu" href="#"><i class="icon-folder-close-alt"></i><span class="hidden-tablet"> Destacadas</span> </a>
                 <ul>
-                	<li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reponews"><i class="icon-file-alt"></i><span class="hidden-tablet"> Nuevas</span2an> <span class="label label-important"> <?php echo $cantnews;?> </span></a></li>
+                	<li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reponews"><i class="icon-file-alt"></i><span class="hidden-tablet"> Nuevas</span2an> <span class="label label-important hidden-tablet"> <?php echo $cantnews;?> </span></a></li>
                     
                     <!-- <li><a class="submenu" href="submenu.html"><i class="icon-file-alt"></i><span class="hidden-tablet"> Top descarga</span> <span class="label label-important"> 3 </span></a></li> -->
                     
-                    <li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reporecommended"><i class="icon-file-alt"></i><span class="hidden-tablet"> Recomendadas</span> <span class="label label-important"> <?php echo $recommended;?> </span></a></li>
+                    <li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reporecommended"><i class="icon-file-alt"></i><span class="hidden-tablet"> Recomendadas</span> <span class="label label-important hidden-tablet"> <?php echo $recommended;?> </span></a></li>
                     
-                    <li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repoverificate"><i class="icon-file-alt"></i><span class="hidden-tablet"> Verificadas</span> <span class="label label-important"> <?php echo $verificate;?> </span></a></li>
+                    <li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repoverificate"><i class="icon-file-alt"></i><span class="hidden-tablet"> Verificadas</span> <span class="label label-important hidden-tablet"> <?php echo $verificate;?> </span></a></li>
                 </ul>
             </li>
 
