@@ -471,7 +471,7 @@ class GenerateShell  extends AppShell{
         //Copiar la BD desde update a index paraque los usuarios puedan descargarla
         $root = $this->getBasePath();
         $source = $root . 'toupdate.db';
-        $destiny = $root . '\\webroot\\index.db';
+        $destiny = $root . DS . 'webroot' . DS . 'index.db';
         copy($source, $destiny);
 
         //poner noticia que solicite a los usuarios que recarguen la BD para ver las aplicaciones nuevas.
