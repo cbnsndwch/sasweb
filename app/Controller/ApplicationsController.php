@@ -355,8 +355,8 @@ class ApplicationsController extends AppController {
         $label = $file['Application']['label'];
         $params = array(
             'id'        => '',
-            'name'      => $label ,
-            'extension' => 'zip',
+            // 'name'      => $label ,
+            // 'extension' => 'zip',
             'mimeType'  => 'application/zip',
             'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.zip',
             'download'=>true
@@ -412,8 +412,8 @@ class ApplicationsController extends AppController {
         $label = $file['Application']['label'];
         $params = array(
             'id'        => '',
-            'name'      => $label ,
-            'extension' => 'apk',
+            // 'name'      => $label . '.apk',
+            // 'extension' => 'apk',
             'mimeType'  => 'application/vnd.android.package-archive',
             'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.apk',
             'download'=>true
@@ -443,8 +443,8 @@ class ApplicationsController extends AppController {
         $label = $file['Version']['label'];
         $params = array(
             'id'        => '',
-            'name'      => $label ,
-            'extension' => 'apk',
+            // 'name'      => $label ,
+            // 'extension' => 'apk',
             'mimeType'  => 'application/vnd.android.package-archive',
             'path'  =>   'webroot/pool/'. $file['Version']['application_id'] . '/'. $file['Version']['version'] . '/' . $file['Version']['application_id']  .'.apk',
             'download'=>true

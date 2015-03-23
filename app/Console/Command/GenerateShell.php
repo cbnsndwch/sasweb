@@ -352,26 +352,24 @@ class GenerateShell  extends AppShell{
     }
 
     public function ready(){
-        $root = $this->getBasePath();
+       $root = $this->getBasePath();
         $source = $root . 'toupdate.db';
         $destiny = $root . DS . 'webroot' . DS . 'index.db';        
         //eliminar update
-        unlink($source);
+        if(file_exists($source))
+            unlink($source);
         //crear toupdate nuevamente con los valores necesarios
         try {
             $db = new PDO('sqlite:' . $source);
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
             $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 
-            $db->exec("create table apks (id TEXT UNIQUE PRIMARY KEY, label TEXT, version TEXT, code TEXT,description TEXT, category TEXT, sdkversion TEXT, size INT, downloads INT)");
-            // $q = $db->prepare('INSERT INTO apks (id,label,version,code,sdkversion,size,downloads,description,category) VALUES (:id,:label,:version,:code,:sdk,:size,\'0\',:description,:category)');
-            // $q->execute(array(':id' => $info['id'], ':label' => $info['label'], ':version' => $info['version'], ':code' => $info['code'], ':sdk' => $info['sdk'], ':size' => $info['size'], ':description' => $jaas_description, ':category' => $jass_category));
+            $db->exec("create table apks (id TEXT UNIQUE PRIMARY KEY, label TEXT, version TEXT, code TEXT, description TEXT, category TEXT, sdkversion TEXT, size INT, downloads INT, have_data INT, verificate  INT, recommended INT, only_logged INT, uploader TEXT, have_version TEXT, created TEXT)");
+            
             $db = null;
         } catch (PDOException $e) {
             echo 'Connexion impossible';
         }
-
-        die();
 
         //solicito la configuracion para ver la ultima fecha de actualizacion
         $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
