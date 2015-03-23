@@ -23,41 +23,6 @@
         echo $this->Html->css('style-responsive');
         
         echo $this->fetch('css');
-        // echo $this->Html->script('jquery-1.11.0.min');
-        // echo $this->Html->script('jquery-migrate-1.0.0.min');
-        // echo $this->Html->script('jquery-ui-1.10.0.custom.min');
-        // echo $this->Html->script('jquery.ui.touch-punch');
-        // echo $this->Html->script('modernizr');
-        // echo $this->Html->script('bootstrap.min');
-        // echo $this->Html->script('jquery.cookie');
-        // echo $this->Html->script('fullcalendar.min');
-        // echo $this->Html->script('jquery.dataTables.min');
-        // echo $this->Html->script('excanvas');
-        // echo $this->Html->script('jquery.flot');
-        // echo $this->Html->script('jquery.flot.pie');
-        // echo $this->Html->script('jquery.flot.stack');
-        // echo $this->Html->script('jquery.flot.resize.min');
-        // echo $this->Html->script('jquery.chosen.min');
-        // echo $this->Html->script('jquery.uniform.min');
-        // echo $this->Html->script('jquery.cleditor.min');
-        // echo $this->Html->script('jquery.noty');
-        // echo $this->Html->script('jquery.elfinder.min');
-        // echo $this->Html->script('jquery.raty.min');
-        // echo $this->Html->script('jquery.iphone.toggle');
-        // echo $this->Html->script('jquery.uploadify-3.1.min');
-        // echo $this->Html->script('jquery.gritter.min');
-        // echo $this->Html->script('jquery.gritter.min');
-        // echo $this->Html->script('jquery.imagesloaded');
-        // echo $this->Html->script('jquery.masonry.min');
-        // echo $this->Html->script('jquery.knob.modified');
-        // echo $this->Html->script('jquery.sparkline.min');
-        // echo $this->Html->script('counter');
-        // echo $this->Html->script('retina');
-        // echo $this->Html->script('custom');
-
-
-
-        // echo $this->fetch('script');
     ?>
 
 
@@ -97,7 +62,7 @@
             <span>Configuracion</span>
         </li>
         <li>
-            <a href="<?php echo $_SERVER['CONTEXT_PREFIX'] .'/users/edit/'. $userAutenticated['id'];?>"><i class="halflings-icon off"></i> Perfil</a>
+            <a href="<?php echo $_SERVER['CONTEXT_PREFIX'] .'/users/changepassword/'. $userAutenticated['id'];?>"><i class="halflings-icon off"></i> Perfil</a>
         </li>
         <li>
             <a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/users/logout"><i class="halflings-icon off"></i> Salir</a>
@@ -138,7 +103,17 @@
 <div class="container-fluid-full">
     <div class="row-fluid">    
     <!-- start: Main Menu -->
-    <?php echo $this->Element(($logged_in)?'menu_user':'menu_publico'); ?>
+    <?php 
+        if($logged_in && $userAutenticated['role'] === "admin"){
+            echo $this->Element('menu_admin');
+        }else if($logged_in && $userAutenticated['role'] === "manager"){
+            echo $this->Element('menu_user'); 
+        }else if($logged_in && $userAutenticated['role'] === "uploader"){
+            echo $this->Element('menu_user'); 
+        }else{
+            echo $this->Element('menu_publico'); 
+        }
+    ?>
     <!-- end: Main Menu -->
 
     <noscript>
@@ -152,14 +127,29 @@
     <div id="content" class="span10">
 
 
-    <ul class="breadcrumb">
+    <!--<ul class="breadcrumb">
         <li>
             <i class="icon-home"></i>
             <a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repo">Inicio</a>
             <i class="icon-angle-right"></i>
         </li>
         <li><a href="#"><?php echo $title_for_layout; ?></a></li>
-    </ul>
+    </ul> -->
+    <div class="breadcrumb hidden-phone ">
+        <h3>Descarga la versión móvil de SAS y accede directamente desde tu dispositivo
+        <a  href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/downloadApp/cu.chendroid.sas">
+            <img height="40px" width="30px" src="/sas/img/layout/ic_launcher.png">            
+        </a>
+        </h3>
+    </div>
+    <div class="breadcrumb hidden-tablet hidden-desktop">
+        <h3>Versión móvil de SAS 
+        <a  href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/downloadApp/cu.chendroid.sas">
+            <img height="40px" width="30px" src="/sas/img/layout/ic_launcher.png">            
+        </a>
+        </h3>
+    </div>
+
     <div class="row-fluid">
         <?php echo $this->Session->flash();
               echo $this->Session->flash('auth');
@@ -174,7 +164,7 @@
     <!-- end: Content -->
     </div><!--/#content.span10-->   
 </div><!--/fluid-row-->
-
+</div>
 <div class="modal hide fade" id="myModal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
@@ -191,10 +181,10 @@
 
 <div class="clearfix"></div>
 
-<footer>
+<footer >
 
     <p>
-        <span style="text-align:left;float:left">&copy; 2014 <a href="http://android.cujae.edu.cu/" alt="Bootstrap_Metro_Dashboard">Simple Android Store</a></span>
+        <span style="text-align:left;float:left">&copy; 2015 <a href="http://android.cujae.edu.cu/sas/" alt="Dirección de Soluciones Informáticas">Dirección de Soluciones Informáticas. Cujae.</a></span>
 
     </p>
 

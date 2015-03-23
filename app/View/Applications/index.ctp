@@ -29,7 +29,7 @@
 		<td><?php echo h($application['Application']['label']); ?>&nbsp;</td>
 		<td><?php echo h($application['Application']['version']); ?>&nbsp;</td>
 		<td><?php echo h($application['Application']['code']); ?>&nbsp;</td>
-		<td><?php echo h($application['Application']['category']); ?>&nbsp;</td>
+		<td><?php echo h($application['Category']['name']); ?>&nbsp;</td>
 		<td><?php echo h($application['Application']['sdkversion']); ?>&nbsp;</td>
 		<td><?php echo h($application['Application']['size']); ?>&nbsp;</td>
 		<td><?php echo h($application['Application']['downloads']); ?>&nbsp;</td>

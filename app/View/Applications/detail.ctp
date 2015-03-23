@@ -48,6 +48,14 @@
                         <tbody>
                             <tr>
                                 <td>
+                                    Id:
+                                </td>
+                                <td>
+                                    <?php echo h($apk['Application']['id']);?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
                                     Versión:
                                 </td>
                                 <td>
@@ -95,53 +103,89 @@
                                     ?>
                                 </td>
                             </tr> 
-                            <tr>
-                                <td>
-                                    Verificada:
-                                </td>
-                                <td>
-                                    <?php
-                                    if(!$apk['Application']['verificate']){
-                                        echo "Sin verificar <i class='halflings-icon thumbs-down'></i>";
-                                    }else{
-                                        echo "Verificada <i class='halflings-icon thumbs-up'></i>";
-                                    }
-                                    ?>
-                                </td>
-                            </tr> 
-                            <!-- <tr>
-                                <td>
-                                    Ranking
-                                </td>
-                                <td>
-                                    <span class="rating">
-                                    <span class="star"></span>
-                                    <span class="star"></span>
-                                    <span class="star"></span>
-                                    <span class="star"></span>
-                                    <span class="star"></span>
-                                </span>
-                                </td>
-                            </tr> -->
+                            <?php if ($apk['Application']['have_data'] == 1): ?>
+                                <tr>
+                                    <td>
+                                        Datos:
+                                    </td>
+                                    <td>                                        
+                                        <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadData' . '/' . $apk['Application']['id'];?>/">
+                                            <i class="halflings-icon white download-alt"></i>
+                                        </a>
 
+                                    </td>
+                                </tr> 
+                            <?php endif; ?>
+
+                            <?php //if ($apk['Application']['verificate'] == 1): ?>
+                                <tr>
+                                    <td>
+                                        Verificada:
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if($apk['Application']['verificate'] == 0){
+                                            echo " <i class='halflings-icon thumbs-down'></i>";
+                                        }else{
+                                            echo " <i class='halflings-icon thumbs-up'></i>";
+                                        }
+                                        ?>
+                                    </td>
+                                </tr> 
+                            <?php //endif; ?>
+
+                            <?php //if ($apk['Application']['recommended'] == 1): ?>
+                                <tr>
+                                    <td>
+                                        Recomendada:
+                                    </td>
+                                    <td>
+                                        <?php
+                                        if($apk['Application']['recommended'] == 0){
+                                            echo " <i class='halflings-icon thumbs-down'></i>";
+                                        }else{
+                                            echo " <i class='halflings-icon thumbs-up'></i>";
+                                        }
+                                        ?>
+                                    </td>
+                                </tr> 
+                            <?php //endif; ?>
+
+                           
                             <!-- Zona de Manager y admins por ahora solo admins-->
                              <?php if ($isadmin): ?>
-                            <tr>
-                                <td>Verificar</td>
-                                <td class="actions">
-                                    <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp' . '/' . $apk['Application']['id'];?>/">
-                                        <i class="halflings-icon white download-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Recomendar</td>
-                                <td class="actions">
-                                    <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp' . '/' . $apk['Application']['id'];?>/">
-                                        <i class="halflings-icon white download-alt"></i>
-                                    </a>
-                                </td>
-                            </tr>
+
+                                <?php if ($apk['Application']['have_data'] == 0): ?>
+                                    <tr>
+                                        <td>Activar Datos</td>
+                                        <td class="actions">
+                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificateData' . '/' . $apk['Application']['id'];?>/">
+                                                <i class="halflings-icon white flag"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+
+                                <?php if ($apk['Application']['verificate'] == 0): ?>
+                                    <tr>
+                                        <td>Verificar</td>
+                                        <td class="actions">
+                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificate' . '/' . $apk['Application']['id'];?>/">
+                                                <i class="halflings-icon white flag"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                                <?php if ($apk['Application']['recommended'] == 0): ?>
+                                    <tr>
+                                        <td>Recomendar</td>
+                                        <td class="actions">
+                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/recommended' . '/' . $apk['Application']['id'];?>/">
+                                                <i class="halflings-icon white ok"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             <?php endif; ?>
 
                             <tr>
@@ -169,6 +213,7 @@
             </div>
             <!-- Aqui acaba la table de propiedades -->
             <!-- Aqui comienza las propiedades -->
+            <?php if (!empty($apk['Application']['description'])): ?>
             <div class="row-fluid sortable ui-sortable" >
                 <div class="box-header">
                     <h2>
@@ -196,6 +241,7 @@
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
             <!-- Aqui terminan las propiedades -->
             
             <!-- Aqui comienza las versiones -->
@@ -254,7 +300,7 @@
                     <h2>
                         <i class="halflings-icon th"></i>
                         <span class="break"></span>
-                        Similares
+                        En la misma categoría
                     </h2>
                     <div class="box-icon">
                         <a class="btn-minimize" href="#">

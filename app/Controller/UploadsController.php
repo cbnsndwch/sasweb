@@ -22,30 +22,78 @@ class UploadsController extends AppController {
  *
  * @var array
  */
-	public $components = array('BdHelper', 'Paginator', 'Session');
+    public $components = array('BdHelper', 'Paginator', 'Session');
 
-//    public function beforeFilter() {
-//        parent::beforeFilter();
-//        if($this->Auth->user('role') != 'admin'){
-//            $this->Session->setFlash('No está autorizado a consultar esa página.');
-//            return $this->redirect(array('controller' => 'applications', 'action' => 'repo'));
-//        }
-//    }
+public function isAuthorized($user) {
+    $padre = parent::beforeFilter();
+    if($padre){
+        return true;
+    }
+    if (($user['role'] == 'uploader' || $user['role'] == 'manager' ) && $this->action == 'upload') {
+        return true;
+    }else if($user['role'] == 'admin') return true;
+    return false;
+}
 
-	public function index() {
-		$this->Upload->recursive = 0;
-		$this->set('uploads', $this->Paginator->paginate());
-	}
+    public function index() {
+        $this->Upload->recursive = 0;
+        $this->set('uploads', $this->Paginator->paginate());
+    }
 
-	public function view($id = null) {
-		if (!$this->Upload->exists($id)) {
-			throw new NotFoundException(__('Invalid upload'));
-		}
-		$options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
-		$this->set('upload', $this->Upload->find('first', $options));
-	}
+    public function indexgood() {
+        $this->Upload->recursive = 0;
+        $this->Paginator->settings=array(
+            'conditions'=> array('Upload.categories_id != 1')
+        );
+        $this->set('uploads', $this->Paginator->paginate());
+    }
 
-    public function update($id = null) {
+    public function view($id = null) {
+        if (!$this->Upload->exists($id)) {
+            throw new NotFoundException(__('Invalid upload'));
+        }
+        $options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
+        $this->set('upload', $this->Upload->find('first', $options));
+    }
+
+    public function update($id = null, $red = 0) {
+        $result = $this->updateInternal($id,$red);
+        $this->Session->setFlash($result);
+
+        if($red == 0)
+            return $this->redirect(array('action' => 'index'));
+        else
+            return $this->redirect(array('action' => 'indexgood'));
+    }
+
+    public function updateallOk() {
+
+         $apps = $this->Upload->find("all", array('conditions' => array('Upload.categories_id != 1')));
+         $result = "Todo ok.";
+         // debug($apps);
+         foreach ($apps as $app) {
+            //debug($app['Upload']['name']);
+            $result = $this->updateInternal($app['Upload']['id'],1);
+         }
+         $this->Session->setFlash($result);
+
+         return $this->redirect(array('action' => 'indexgood'));
+    }
+
+    public function updateall() {
+
+         $apps = $this->Upload->find("all", array('conditions' => array('Upload.categories_id' => 1)));
+         $result = "Todo ok.";
+         // debug($apps);
+         foreach ($apps as $app) {
+            //debug($app['Upload']['name']);
+            $result = $this->updateInternal($app['Upload']['id'],0);
+         }
+         $this->Session->setFlash($result);
+        return $this->redirect(array('action' => 'index'));
+    }
+
+    private function updateInternal($id = null, $red = 0) {
         $bad_category = array('Terceros','Temporalmente nada', '');
         if (!$this->Upload->exists($id)) {
             throw new NotFoundException(__('Invalid upload'));
@@ -90,8 +138,8 @@ class UploadsController extends AppController {
             $strdel = $_SERVER['CONTEXT_DOCUMENT_ROOT'] .'poolUpload/';
             $folderVersion = $strdel . $up['Upload']['name'] . '/' . $up['Upload']['version'] . '/';
             rmdir($folderVersion);
-            $folderId = $strdel . $up['Upload']['name'] . '/';
-            rmdir($folderId);
+            // $folderId = $strdel . $up['Upload']['name'] . '/';
+            // rmdir($folderId);
             if(!$moveFail){
                 
                 //ver si este id esta ya en aplication
@@ -113,6 +161,7 @@ class UploadsController extends AppController {
                     $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                     $toINsert['Application']['downloads'] = 0;
                     $toINsert['Application']['rating'] = 0;
+                    $toINsert['Application']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
                     $toINsert['Application']['size'] = $up['Upload']['size'];
                     $toINsert['Application']['developer'] = $up['Upload']['developer'];
                     $toINsert['Application']['have_data'] = 0;
@@ -123,14 +172,14 @@ class UploadsController extends AppController {
                         $this->Upload->id = $id;
                         if ($this->Upload->delete()) {
                             $this->BdHelper->setBDupdatable();
-                            $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
+                            return (__('La nueva aplicación ha sido agregada con éxito.'));
                         } else {
                             $ok = false;
-                            $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                            return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
                         }
                     }else{
                         $ok = false;
-                        $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                        return (__('La nueva aplicación no ha sido agregada.'));
                     }
 
                 }else{//si esta en app, verifico los codigos y si es mayor actualizo sino voy para versiones
@@ -150,8 +199,9 @@ class UploadsController extends AppController {
                         $toINsert['Version']['sdkversion'] = $app['Application']['sdkversion'];// esto esta en veremos
                         $toINsert['Version']['downloads'] = $app['Application']['downloads'];
                         $toINsert['Version']['rating'] = $app['Application']['rating'];
-                        $toINsert['Version']['developer'] = $app['Upload']['developer'];
-                        $toINsert['Version']['size'] = $app['Upload']['size'];
+                        $toINsert['Version']['developer'] = $app['Application']['developer'];
+                        $toINsert['Version']['verificate'] = ($app['Application']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
+                        $toINsert['Version']['size'] = $app['Application']['size'];
                         $toINsert['Version']['have_data'] = $app['Application']['have_data'];
                         $this->Version->create();
                         if ($this->Version->save($toINsert)) {
@@ -166,7 +216,8 @@ class UploadsController extends AppController {
                             $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Application']['downloads'] = 0;
                             $toINsert['Application']['rating'] = 0;
-                            $toINsert['Application']['size'] = $app['Upload']['size'];
+                            $toINsert['Application']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
+                            $toINsert['Application']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Application']['have_data'] = 0;
                             $this->Application->create();
@@ -175,18 +226,18 @@ class UploadsController extends AppController {
                                 $this->Upload->id = $id;
                                 if ($this->Upload->delete()) {
                                     $this->BdHelper->setBDupdatable();
-                                    $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
+                                    return (__('La nueva aplicación ha sido agregada con éxito.'));
                                 } else {
                                     $ok = false;
-                                    $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                                    return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
                                 }
                             }else{
                                 $ok = false;
-                                $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                                return (__('La nueva aplicación no ha sido agregada.'));
                             }
                         }else{
                             $ok = false;
-                            $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                            return (__('La nueva aplicación no ha sido agregada.'));
                         }
 
 
@@ -213,9 +264,10 @@ class UploadsController extends AppController {
                             $toINsert['Version']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
                             $toINsert['Version']['downloads'] = 0;
                             $toINsert['Version']['rating'] = 0;
-                            $toINsert['Version']['size'] = $app['Upload']['size'];
+                            $toINsert['Version']['size'] = $up['Upload']['size'];
                             $toINsert['Application']['developer'] = $up['Upload']['developer'];
                             $toINsert['Version']['have_data'] = 0;
+                            $toINsert['Version']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
                             $this->Version->create();
                             if ($this->Version->save($toINsert)) {
                                 //luego de insertado lo elimino de upload
@@ -225,18 +277,19 @@ class UploadsController extends AppController {
                                     $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
                                 } else {
                                     $ok = false;
-                                    $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                                    return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
                                 }
                             }else{
                                 $ok = false;
-                                $this->Session->setFlash(__('La nueva aplicación no ha sido agregada.'));
+                                return (__('La nueva aplicación no ha sido agregada.'));
                             }
                         }
                     }                   
                 }
             }else{
                 //error al copiar loe elemntos
-                $this->Session->setFlash(__('No ha podido ser copiada la aplicación a su carpeta destino, verifique y los permisos de escritura y vuelva a intentarlo.'));
+                $ok = false;
+                return (__('No ha podido ser copiada la aplicación a su carpeta destino, verifique y los permisos de escritura y vuelva a intentarlo.'));
             }
 
         }else{
@@ -245,17 +298,17 @@ class UploadsController extends AppController {
             $ok = false;
             $this->Upload->id = $id;
             if ($this->Upload->delete()) {
-                $this->Session->setFlash(__('La aplicación ya existia, se ha eliminado el registro.'));
+                return (__('La aplicación ya existia, se ha eliminado el registro.'));
             } else {
-                $this->Session->setFlash(__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
             }
         }
         if($ok){
             //Actualizo la info de configuracion
             $this->BdHelper->setBDupdatable();
-            $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
+            return (__('La nueva aplicación ha sido agregada con éxito.'));
         }
-        return $this->redirect(array('action' => 'index'));
+        
     }
 
     public function upload(){
@@ -301,7 +354,7 @@ class UploadsController extends AppController {
                             'label' => $info['label'],
                             'version' => $info['version'],
                             'code' => $info['code'],
-                            'category' => (empty($_POST['category']))?"Terceros": $_POST['category'] ,
+                            'categories_id' => (empty($_POST['category']))?1: $_POST['category'] ,
                             'description' => (empty($_POST['description']))?"Sin definir": $_POST['description'],
                             'sdkversion' => $info['sdk'],
                             'icon' => $info['icon'],
@@ -329,12 +382,13 @@ class UploadsController extends AppController {
 
 
         }else{
-            $this->Session->setFlash("Seleccione la aplicacion a subir");
+           // $this->Session->setFlash("Seleccione la aplicacion a subir");
         }
-        $query = 'SELECT DISTINCT Application.category
-                 FROM applications as Application';
-        $cats = $this->Application->query($query);
+        // $query = 'SELECT DISTINCT Application.category
+        //          FROM applications as Application';
+        // $cats = $this->Application->query($query);
 //        var_dump($cats[0]['Application']["category"]);
+        $cats = $this->Category->find("all", array());
         $this->set("categories", $cats);
 
         
@@ -411,50 +465,50 @@ class UploadsController extends AppController {
  *
  * @return void
  */
-	public function add() {
-		if ($this->request->is('post')) {
-			$this->Upload->create();
-			if ($this->Upload->save($this->request->data)) {
-				$this->Session->setFlash(__('The upload has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
-			}
-		}
-		$users = $this->Upload->User->find('list');
-		$this->set(compact('users'));
-	}
+    public function add() {
+        if ($this->request->is('post')) {
+            $this->Upload->create();
+            if ($this->Upload->save($this->request->data)) {
+                $this->Session->setFlash(__('The upload has been saved.'));
+                return $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
+            }
+        }
+        $users = $this->Upload->User->find('list');
+        $this->set(compact('users'));
+    }
 
-	public function edit($id = null) {
-		if (!$this->Upload->exists($id)) {
-			throw new NotFoundException(__('Invalid upload'));
-		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Upload->save($this->request->data)) {
-				$this->Session->setFlash(__('The upload has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
-			$this->request->data = $this->Upload->find('first', $options);
-		}
-		$users = $this->Upload->User->find('list');
-		$this->set(compact('users'));
-	}
+    public function edit($id = null) {
+        if (!$this->Upload->exists($id)) {
+            throw new NotFoundException(__('Invalid upload'));
+        }
+        if ($this->request->is(array('post', 'put'))) {
+            if ($this->Upload->save($this->request->data)) {
+                $this->Session->setFlash(__('The upload has been saved.'));
+                return $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The upload could not be saved. Please, try again.'));
+            }
+        } else {
+            $options = array('conditions' => array('Upload.' . $this->Upload->primaryKey => $id));
+            $this->request->data = $this->Upload->find('first', $options);
+        }
+        $users = $this->Upload->User->find('list');
+        $this->set(compact('users'));
+    }
 
-	public function delete($id = null) {
-		$this->Upload->id = $id;
-		if (!$this->Upload->exists()) {
-			throw new NotFoundException(__('Invalid upload'));
-		}
-		$this->request->allowMethod('post', 'delete');
-		if ($this->Upload->delete()) {
-			$this->Session->setFlash(__('The upload has been deleted.'));
-		} else {
-			$this->Session->setFlash(__('The upload could not be deleted. Please, try again.'));
-		}
-		return $this->redirect(array('action' => 'index'));
-	}
+    public function delete($id = null) {
+        $this->Upload->id = $id;
+        if (!$this->Upload->exists()) {
+            throw new NotFoundException(__('Invalid upload'));
+        }
+        $this->request->allowMethod('post', 'delete');
+        if ($this->Upload->delete()) {
+            $this->Session->setFlash(__('The upload has been deleted.'));
+        } else {
+            $this->Session->setFlash(__('The upload could not be deleted. Please, try again.'));
+        }
+        return $this->redirect(array('action' => 'index'));
+    }
 }

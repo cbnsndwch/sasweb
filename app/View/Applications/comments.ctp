@@ -3,7 +3,7 @@
 <div class="box span10" ontablet="span0" ondesktop="span10">
 
 	<div class="box-header">
-		<h2><i class="halflings-icon comment"></i><span class="break"></span>Commentarios sobre <strong><?= $apk['Application']['label']?></strong></h2>
+		<h2><i class="halflings-icon comment"></i><span class="break"></span>Comentarios sobre <strong><?= $apk['Application']['label']?></strong></h2>
 		
 	</div>
 	<div class="box-content">

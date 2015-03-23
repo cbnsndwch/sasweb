@@ -18,7 +18,7 @@
             <li>
                 <a class="dropmenu" href="#"><i class="icon-folder-close-alt"></i><span class="hidden-tablet"> Destacadas</span> </a>
                 <ul>
-                	<li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reponews"><i class="icon-file-alt"></i><span class="hidden-tablet"> Nuevas</span2an> <span class="label label-important hidden-tablet"> <?php echo $cantnews;?> </span></a></li>
+                	<li><a class="submenu" href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reponews"><i class="icon-file-alt"></i><span class="hidden-tablet"> Nuevas</span> <span class="label label-important hidden-tablet"> <?php echo $cantnews;?> </span></a></li>
                     
                     <!-- <li><a class="submenu" href="submenu.html"><i class="icon-file-alt"></i><span class="hidden-tablet"> Top descarga</span> <span class="label label-important"> 3 </span></a></li> -->
                     
@@ -28,8 +28,19 @@
                 </ul>
             </li>
 
+            <li>
+                <a class="dropmenu" href="#"><i class="icon-folder-close-alt"></i><span class="hidden-tablet"> Subidos</span> </a>
+                <ul>
 
-            <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/generalcomments/"><i class="icon-list-alt"></i><span class="hidden-tablet"> Comentarios</span></a></li>
+                    <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/uploads/indexgood"><i class="icon-th-list"></i><span class="hidden-tablet"> Verificar Completos</span></a></li>
+
+                    <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/uploads/index"><i class="icon-th"></i><span class="hidden-tablet"> Verificar Subidos</span></a></li>
+
+                    <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/uploads/upload"><i class="icon-share"></i><span class="hidden-tablet"> Subir Apk</span></a></li>
+                </ul>
+            </li>
+
+            <li><a href="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/generalcomments/"><i class="icon-comments"></i><span class="hidden-tablet"> Comentarios</span></a></li>
 
 
      <!--       <li><a href="form.html"><i class="icon-edit"></i><span class="hidden-tablet"> Forms</span></a></li>

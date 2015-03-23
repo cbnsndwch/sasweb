@@ -55,13 +55,40 @@ class User extends AppModel {
 		)
 	);
 
+	public $validate = array(
+		'password' => array(
+			'Not Empty' => array(
+				'rule' => 'notEmpty',
+				'messsage' => 'Debe escribir la clave.'
+				),
+			'Match_Password' => array(
+				'rule' => 'matchPassword',
+				'message' => 'Las claves deben coincidir.'
+				)
+			),
+		'password_confirmation' => array(
+			'Not Empty' => array(
+				'rule' => 'notEmpty',
+				'messsage' => 'Por favor confirme la clave.'
+				)
+			),
+		);
+
+	public function matchPassword($data){//debug($this->data);
+		if($data['password'] == $this->data['User']['password_confirmation']){
+			return true;
+		}
+		$this->invalidate('password_confirmation', 'Las claves deben coincidir.');
+		return false;
+	}
+
 	public function beforeSave($options = array()) {
         if (isset($this->data[$this->alias]['password'])) {
             $passwordHasher = new SimplePasswordHasher();
             $this->data[$this->alias]['password'] = $passwordHasher->hash(
                 $this->data[$this->alias]['password']
             );
-        }
+        }        
         return true;
     }
 

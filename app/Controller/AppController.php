@@ -70,9 +70,12 @@ class AppController extends Controller {
         //data for menu
         //put data en la pagina
         $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
+        $dayToNew = $config['Configuration']['days_to_new'];
+        $date = date_create('now');
+        date_sub($date, date_interval_create_from_date_string($dayToNew . ' days'));
         $settings =array(
             'conditions' => array(
-                'Application.created >= "' . $config['Configuration']['last_db_update'] . '"' ,
+                'Application.created >= "' . $date->format('Y-m-d H:i:s') . '"' ,
                 ));
         $cantNew = $this->Application->find('count', $settings);
 

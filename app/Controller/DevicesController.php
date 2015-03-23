@@ -35,7 +35,7 @@ class DevicesController  extends AppController {
     }
 
     public function manager() {
-        $this->layout = "xml/default.ctp";
+        $this->layout = null;//"xml/default.ctp";
         $this->autoRender = false;
         $tag = $_POST['tag'];
         $response = array("tag" => $tag, "success" => 0, "error" => 0);
@@ -43,8 +43,7 @@ class DevicesController  extends AppController {
 
         switch($tag){
             case "checkonline":
-                $response["success"] = 1;
-                echo json_encode($response);
+                $this->checkonline($response);
                 break;
             case "checkonlineUpload":
                 //Aqui se puede devolver tambien la forma disponible de upload para que el apk suba la aplicacion
@@ -118,6 +117,18 @@ class DevicesController  extends AppController {
                 break;
         }
 
+
+    }
+
+    public function checkonline($response){
+        $response["success"] = 1;
+        //Aqui podria devolver varias cosas a los dispositivos, como por ejemplo
+        //podria devolver el hash de la base de datos de esta forma no habria que descargarla si coincide
+        //se pasara la info del usuario en caso de estar autenticado y si ya no es usuario, se perderan el device los privilegios de serlo
+        
+
+
+        echo json_encode($response);
 
     }
 //    public function checkNotice($response){
@@ -611,7 +622,7 @@ class DevicesController  extends AppController {
         $label = $file['Apk']['label'];
         $params = array(
             'id'        => '',
-            'name'      => $label . '.apk',
+            'name'      => $label ,
             'extension' => 'apk',
             'mimeType'  => 'application/vnd.android.package-archive',
             'path'  =>   'webroot' . DS . 'pool' . DS . $id . DS . $file['Apk']['version'] . DS . $id  .'.apk',

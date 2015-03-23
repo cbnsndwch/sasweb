@@ -9,13 +9,13 @@ App::uses('AppController', 'Controller');
  */
 class ApplicationsController extends AppController {
 
-    var $uses = array('Application', 'Version', 'Apk', 'History', 'Category','Configuration', 'Coment');
+    var $uses = array('Application', 'Version', 'Apk', 'Generalcoment', 'History', 'Category','Configuration', 'Coment');
 /**
  * Components
  *
  * @var array
  */
-	public $components = array('Paginator', 'Session','DebugKit.Toolbar');
+	public $components = array('Paginator', 'Session');//,'DebugKit.Toolbar'
 
     public function beforeFilter(){
         parent::beforeFilter();
@@ -30,8 +30,10 @@ class ApplicationsController extends AppController {
             'repoverificate',
             'comments',
             'addcomment',
+            'generalcomments',
             'detail',
             'downloadApp',
+            'downloadData',
             'downloadVersion'
         );
         $this->Paginator->settings=array(
@@ -66,8 +68,38 @@ class ApplicationsController extends AppController {
 		$this->set('applications', $this->Paginator->paginate());
 	}
 
+    public function verificate($id = null){
+        if (!$this->Application->exists($id)) {
+            $this->redirect(array('action' => 'detail',$id));
+        } else{
+            $options = array('conditions' => array('Application.id' => $id));
+            $app = $this->Application->find('first', $options);
+            $app['Application']['verificate'] = 1;
+            //Aqui se puede agregar tambien quien lo verifico
+            if($this->Application->save($app)){
+                $this->Session->setFlash('Application verificada.');
+                $this->redirect(array('action' => 'detail',$id));
+            }            
+        }
+    }
+
+     public function recommended($id = null){
+        if (!$this->Application->exists($id)) {
+            $this->redirect(array('action' => 'detail',$id));
+        } else{
+            $options = array('conditions' => array('Application.id' => $id));
+            $app = $this->Application->find('first', $options);
+            $app['Application']['recommended'] = 1;
+            //Aqui se puede agregar tambien quien lo verifico
+            if($this->Application->save($app)){
+                $this->Session->setFlash('Application verificada.');
+                $this->redirect(array('action' => 'detail',$id));
+            }            
+        }
+    }
+
     public function comments($id = null){
-        $this->set('title_for_layout','Comentarios');
+        $this->set('title_for_layout',' Comentarios');
         if (!$this->Application->exists($id)) {
             throw new NotFoundException(__('Invalid apk'));
         }      
@@ -106,6 +138,44 @@ class ApplicationsController extends AppController {
 
              $this->redirect(array('action' => 'comments',$id));
         }
+    }
+
+    public function generalcomments(){
+        $this->set('title_for_layout','Comentarios sobre Sas');
+
+        // $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $id));
+        // $this->Application->recursive = 2;
+        // $apk = $this->Application->find('first', $options);   
+        // //var_dump($apk);
+        // $this->set('coments', $apk);
+        
+    }
+
+    public function addgeneralcomment($id = null){
+        
+        $coment = $_POST['coment'];
+
+        $insert = array(
+            'Generalcoment' => array(
+                    'ip' => $this->request->clientIp(),
+                    'coment' => $coment,
+                    'client' => 'web'
+
+                )
+            );
+        
+        if($this->Auth->loggedIn())
+            $insert['Generalcoment']['usertag'] = $this->Auth->user()['hash'];//por ahora luego aqui poner id
+
+        $this->Generalcoment->create();
+        if($this->Generalcoment->save($insert)){
+           //$this->Session->setFlash(__('Se ha almacenado el comentario con exito.'));
+        }else{
+           // $this->Session->setFlash(__('No se pudo almacenar el comentario.'));
+        }
+
+         $this->redirect(array('action' => 'generalcomments'));
+        
     }
 
 
@@ -152,11 +222,16 @@ class ApplicationsController extends AppController {
         $limit = 6;
         //pido la configuracion
         $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
-
+        //este es la cantidad de dias pasados que se cogeran para calcular los nuevos, esto debe estar en la tabla de conf o del usuario
+        $dayToNew = $config["Configuration"]['days_to_new'];
+        $date = date_create('now');
+        date_sub($date, date_interval_create_from_date_string($dayToNew . ' days'));
+        // var_dump($date->format('Y-m-d H:i:s'));
+        //  var_dump($date);
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array(
-                'Application.created >= "' . $config['Configuration']['last_db_update'] . '"' ,
+                'Application.created >= "' . $date->format('Y-m-d H:i:s') . '"' ,
                 ),
             'order' => array(
                 'Application.label' => 'asc'
@@ -269,6 +344,44 @@ class ApplicationsController extends AppController {
         $this->set('search',$search);
     }
 
+    public function downloadData($id = null){
+        if (!$this->Application->exists($id)) {
+            throw new NotFoundException(__('Invalid apk'));
+        }
+        $label = $id;
+        $this->layout = null;
+        $this->viewClass = 'Media';
+        $file = $this->Application->find('first',array('conditions'=>array('Application.id'=>$id)));
+        $label = $file['Application']['label'];
+        $params = array(
+            'id'        => '',
+            'name'      => $label ,
+            'extension' => 'zip',
+            'mimeType'  => 'application/zip',
+            'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.zip',
+            'download'=>true
+        );
+        $this->response->type('application/zip');
+        $this->set($params);
+    }
+
+    public function verificateData($id = null){
+        if (!$this->Application->exists($id)) {
+            throw new NotFoundException(__('Invalid apk'));
+        }
+        $strDest = $_SERVER['CONTEXT_DOCUMENT_ROOT'] .'pool' . DS;
+        $file = $this->Application->find('first',array('conditions'=>array('Application.id'=>$id)));
+        $strDest .= $file['Application']['id'] . DS . $file['Application']['version'] . DS . $file['Application']['id'] . '.zip';        
+        if(file_exists($strDest)){
+            //los datos estan ok
+            $this->Application->id = $id;
+            $this->Application->saveField('have_data', 1);
+        }else{
+            $this->Session->setFlash('Antes de activar los datos debe colocar lel archivo .zip en la carpeta correcta. Esta version no incluye el control automatico de los datos.');
+        }
+        return $this->redirect(array('action' => 'detail', $id));
+    }
+
     public function downloadApp($id = null){
         if (!$this->Application->exists($id)) {
             throw new NotFoundException(__('Invalid apk'));
@@ -299,7 +412,7 @@ class ApplicationsController extends AppController {
         $label = $file['Application']['label'];
         $params = array(
             'id'        => '',
-            'name'      => $label . '.apk',
+            'name'      => $label ,
             'extension' => 'apk',
             'mimeType'  => 'application/vnd.android.package-archive',
             'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.apk',
@@ -330,7 +443,7 @@ class ApplicationsController extends AppController {
         $label = $file['Version']['label'];
         $params = array(
             'id'        => '',
-            'name'      => $label . '.apk',
+            'name'      => $label ,
             'extension' => 'apk',
             'mimeType'  => 'application/vnd.android.package-archive',
             'path'  =>   'webroot/pool/'. $file['Version']['application_id'] . '/'. $file['Version']['version'] . '/' . $file['Version']['application_id']  .'.apk',
