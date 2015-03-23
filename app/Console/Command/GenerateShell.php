@@ -352,6 +352,27 @@ class GenerateShell  extends AppShell{
     }
 
     public function ready(){
+        $root = $this->getBasePath();
+        $source = $root . 'toupdate.db';
+        $destiny = $root . DS . 'webroot' . DS . 'index.db';        
+        //eliminar update
+        unlink($source);
+        //crear toupdate nuevamente con los valores necesarios
+        try {
+            $db = new PDO('sqlite:' . $source);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+            $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+
+            $db->exec("create table apks (id TEXT UNIQUE PRIMARY KEY, label TEXT, version TEXT, code TEXT,description TEXT, category TEXT, sdkversion TEXT, size INT, downloads INT)");
+            // $q = $db->prepare('INSERT INTO apks (id,label,version,code,sdkversion,size,downloads,description,category) VALUES (:id,:label,:version,:code,:sdk,:size,\'0\',:description,:category)');
+            // $q->execute(array(':id' => $info['id'], ':label' => $info['label'], ':version' => $info['version'], ':code' => $info['code'], ':sdk' => $info['sdk'], ':size' => $info['size'], ':description' => $jaas_description, ':category' => $jass_category));
+            $db = null;
+        } catch (PDOException $e) {
+            echo 'Connexion impossible';
+        }
+
+        die();
+
         //solicito la configuracion para ver la ultima fecha de actualizacion
         $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
 
@@ -469,9 +490,7 @@ class GenerateShell  extends AppShell{
 
 
         //Copiar la BD desde update a index paraque los usuarios puedan descargarla
-        $root = $this->getBasePath();
-        $source = $root . 'toupdate.db';
-        $destiny = $root . DS . 'webroot' . DS . 'index.db';
+        
         copy($source, $destiny);
 
         //poner noticia que solicite a los usuarios que recarguen la BD para ver las aplicaciones nuevas.
