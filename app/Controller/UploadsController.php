@@ -332,17 +332,23 @@ public function isAuthorized($user) {
                 } else {
                     $strPath = $_SERVER['CONTEXT_DOCUMENT_ROOT'] . DS . 'poolUpload' . DS;
                     if (!is_dir($strPath)) {
-                        mkdir($strPath, 7777);
+                        mkdir($strPath);
+                        chgrp($path, "www-data");
+                        chmod($path, 0777);
                     }
                     $strPath .= $info['id'] . DS;
                     //            var_dump($_SERVER);
                     if (!is_dir($strPath)) {
-                        mkdir($strPath, 7777);
+                        mkdir($strPath);
+                        chgrp($path, "www-data");
+                        chmod($path, 0777);
                     }
                     $strPath .= str_replace(',', '.', $info['version']) . DS;
                     //            var_dump($_SERVER);
                     if (!is_dir($strPath)) {
-                        mkdir($strPath, 7777);
+                        mkdir($strPath);
+                        chgrp($path, "www-data");
+                        chmod($path, 0777);
                     }
                     $strPath .= $info['id'] . '.apk';
                     //            $strPath = 'files/'  . $info['id'] . '.apk';
