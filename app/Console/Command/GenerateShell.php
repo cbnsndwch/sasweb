@@ -352,7 +352,7 @@ class GenerateShell  extends AppShell{
     }
 
     public function ready(){
-       $root = $this->getBasePath();
+        $root = $this->getBasePath();
         $source = $root . 'toupdate.db';
         $destiny = $root . DS . 'webroot' . DS . 'index.db';        
         //eliminar update
@@ -371,12 +371,7 @@ class GenerateShell  extends AppShell{
 
         //solicito la configuracion para ver la ultima fecha de actualizacion
         $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
-
-        if($config['Configuration']['bd_update'] ==0){
-            $this->out('La Base de Datos esta actualizada.');
-            die();
-        }
-
+        
         $this->out('Eliminando los registros actuales.');
         //Eliminar la BD temporal
         $this->Apk->useDbConfig = 'temp';
@@ -387,124 +382,54 @@ class GenerateShell  extends AppShell{
         //recojo todas las aplicaciones en el sistema que son anteriores a la ultima fecha de actualizacion
         //si es null la fecha entonces todas son nuevas
         $i =0;
-        $j =0;
-        //if(isset($config['Configuration']['last_db_update'])){
-            //si no es null lo pido separado
-            //aqui dentro del if pido los viejos y preparo la query para los nuevos
-            //Primero los viejos
-            $fecha_update = $config['Configuration']['last_db_update'];
-            $fecha = new \DateTime($fecha_update);
-            $conditionDate = array(/*' Application.created < ' =>  $fecha->format('Y-m-d H:i:s')*/);
-            $old = $this->Application->find('all', array(/*'limit' => 100,*/ 'conditions' => $conditionDate));
-            $this->out(count($old) . ' aplicaciones viejas a agregar.');
-            //Aqui paso los elementos, teniendo en cuenta que news es 0.
-            foreach($old as $app){
-                $havev = '';
-                if(count($app['Version']) > 0){
-                    $havev = json_encode($app['Version']);
-                }
-
-                $toOld = array(
-                    'Apk' => array(
-                        'id' => $app['Application']['id'],
-                        'label' => $app['Application']['label'],
-                        'version' => $app['Application']['version'],
-                        'code' => $app['Application']['code'],
-                        'size' => $app['Application']['size'],
-                        'category' => $app['Category']['name'],
-                        'description' => $app['Application']['description'],
-                        'sdkversion' => $app['Application']['sdkversion'],
-                        'downloads' => $app['Application']['downloads'],
-                        'rating' => $app['Application']['rating'],
-                        'have_data' => $app['Application']['have_data'],
-                        'verificate' => $app['Application']['verificate'],
-                        'recommended' => $app['Application']['recommended'],
-                        'only_logged' => $app['Application']['only_logged'],
-                        'uploader' => $app['User']['name'],
-                        'news' => 0,
-                        'have_version' => $havev,
-                        'created' => $app['Application']['created'],
-                    )
-                );
-                $this->Apk->create();
-                if($this->Apk->save($toOld)){
-                    $this->out('Agregada ' . $app['Application']['label']);
-                    $i ++;
-                }
-
+        $apps = $this->Application->find('all', array('limit' => 1 ));
+        $this->out(count($apps) . ' aplicaciones a agregar.');
+        //Aqui paso los elementos, teniendo en cuenta que news es 0.
+        foreach($apps as $app){
+            $havev = '';
+            if(count($app['Version']) > 0){
+                $havev = json_encode($app['Version']);
             }
-            $conditions = array(' Application.created > ' =>  $fecha->format('Y-m-d H:i:s'));
-        // }else{
-        //     $res = $this->in('La fecha de ultima actualizacion es null toda la BD se generara como nueva, desea proceder?', array('S','N'), 'N');
-        //     if($res == 'N'){
-        //         $this->out('Gracias por usar nuestro sistema.');
-        //         die();
-        //     }
-        //     //si es null aqui preparo una query vacia para que todos sean nuevos
-        //     $conditions = array();
-        // }
-        // $news = $this->Application->find('all', array(/*'limit' => 100,*/ 'conditions' => $conditions));
-        // $this->out(count($news) . ' aplicaciones nuevas a agregar.');
-        // $apks_added = "";
-        // //Aqui paso los elementos, teniendo en cuenta que news es 1.
-        // foreach($news as $app){
-        //     $havev = '';
-        //     if(count($app['Version']) > 0){
-        //         $havev = json_encode($app['Version']);
-        //     }
-        //     $toOld = array(
-        //         'Apk' => array(
-        //             'id' => $app['Application']['id'],
-        //             'label' => $app['Application']['label'],
-        //             'version' => $app['Application']['version'],
-        //             'code' => $app['Application']['code'],
-        //             'size' => $app['Application']['size'],
-        //             'category' => $app['Category']['name'],
-        //             'description' => $app['Application']['description'],
-        //             'sdkversion' => $app['Application']['sdkversion'],
-        //             'downloads' => $app['Application']['downloads'],
-        //             'rating' => $app['Application']['rating'],
-        //             'have_data' => $app['Application']['have_data'],
-        //             'verificate' => $app['Application']['verificate'],
-        //             'recommended' => $app['Application']['recommended'],
-        //             'only_logged' => $app['Application']['only_logged'],
-        //             'uploader' => $app['User']['name'],
-        //             'created' => $app['Application']['created'],
-        //             'have_version' => $havev
-        //         )
-        //     );
-        //     $this->Apk->create();
-        //     if($this->Apk->save($toOld)){
-        //         $this->out('Agregada ' . $app['Application']['label']);
-        //         if($j < 10)
-        //             $apks_added = $app['Application']['label'] . "\n";
-        //         $j ++;
-        //     }
+            $toOld = array(
+                'Apk' => array(
+                    'id' => $app['Application']['id'],
+                    'label' => $app['Application']['label'],
+                    'version' => $app['Application']['version'],
+                    'code' => $app['Application']['code'],
+                    'size' => $app['Application']['size'],
+                    'category' => $app['Category']['name'],
+                    'description' => $app['Application']['description'],
+                    'sdkversion' => $app['Application']['sdkversion'],
+                    'downloads' => $app['Application']['downloads'],
+                    'rating' => $app['Application']['rating'],
+                    'have_data' => $app['Application']['have_data'],
+                    'verificate' => $app['Application']['verificate'],
+                    'recommended' => $app['Application']['recommended'],
+                    'only_logged' => $app['Application']['only_logged'],
+                    'uploader' => $app['User']['name'],
+                    'news' => 0,
+                    'have_version' => $havev,
+                    'created' => $app['Application']['created'],
+                )
+            );
+            $this->Apk->create();
+            if($this->Apk->save($toOld)){
+                $this->out('Agregada ' . $app['Application']['label']);
+                $i ++;
+            }
+        }     
 
-        // }
-        // / $apks_added .= " ...";
-
-
-        //Copiar la BD desde update a index paraque los usuarios puedan descargarla
-        
+        //Copiar la BD desde update a index paraque los usuarios puedan descargarla        
         copy($source, $destiny);
 
-        //poner noticia que solicite a los usuarios que recarguen la BD para ver las aplicaciones nuevas.
-        // $notice = array(
-        //     'Noticy' => array(
-        //         'title' => 'Actualizacion',
-        //         'body' => 'Existen nuevas aplicaciones en el servidor, recargue desde su dispositivo android (usando configuracion->Recargar BD desde el servidor) o visite nuestro sitio. \v' . $apks_added,
-        //         'user_id' => 1,
-        //     )
-        // );
-        // $this->Noticy->create();
-        // $this->Noticy->save($notice);
+        $files = sha1_file($source);
+        $this->out("El hash de la BD es " . $files);
+        
         //Actualizar la BD con la fecha actual
-        $config['Configuration']['bd_update'] = 0;
-        $config['Configuration']['last_db_update'] = date('Y-m-d H:i:s');
-        // $this->Configuration->save($config);
+        $this->Configuration->id = $config['Configuration']['id'];
+        $this->Configuration->saveField('bd_hash', $files);
 
-        $this->out('Pasadas ' + ($i + $j) . ' aplicaciones de ellas ' . $j . ' nuevas.');
+        $this->out('Agregadas ' . $i . ' aplicaciones.');
     }
 
     public function cleanbadapps(){

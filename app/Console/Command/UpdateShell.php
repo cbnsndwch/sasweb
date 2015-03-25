@@ -66,6 +66,55 @@ class UpdateShell extends AppShell{
         }
     }
     /**
+    * Pasa la informacion de la tabla version a la tabla aplicacion antes de eliminar esta
+    **/
+    public function vaciar_versiones(){
+
+
+        $versions =  $this->Version->find('all', array());
+        foreach ($versions as $v) {  
+            $settings =array(
+            'conditions' => array(
+                'Application.parent_id is null',
+                'Application.name' =>  $v['Version']['application_id']
+                )
+            );
+            $app =  $this->Application->find('first', $settings);
+            if(!isset($app['Application']))continue;
+            $toAdd = array(
+                'Application' => array(
+                    'name' => $v['Version']['application_id'],
+                    'label' => $v['Version']['label'],
+                    'version' => $v['Version']['version'],
+                    'code' => $v['Version']['code'],
+                    'size' => $v['Version']['size'],
+                    'category' => $v['Category']['name'],
+                    'description' => $v['Version']['description'],
+                    'sdkversion' => $v['Version']['sdkversion'],
+                    'downloads' => $v['Version']['downloads'],
+                    'rating' => $v['Version']['rating'],
+                    'have_data' => $v['Version']['have_data'],
+                    'verificate' => 0,
+                    'recommended' => 0,
+                    'users_id' => $v['Version']['users_id'],
+                    'created' => $v['Version']['created'],
+                    'modified' => $v['Version']['modified'],
+                    'developer'=> $v['Version']['developer'],
+                    'parent_id' => $app['Application']['id']
+                )
+            );
+
+            $this->Application->create();
+            if($this->Application->save($toAdd)){
+                $this->Version->id = $v['Version']['id'];
+                $this->Version->delete();
+                $this->out('Se agrego a Aplicaciones ' . $v['Version']['label']);
+            }
+
+        }   
+
+    }
+    /**
     * Este metodo se encarga de poner el id correspondiente a la categoria en cada aplicacion y en caso de que la aplicacion 
     * tenga una categoria invalida arega el especial que es "Sin Clasificar"    
     */
