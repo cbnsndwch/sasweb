@@ -16,6 +16,7 @@ class DevicesController  extends AppController {
         'User',
         'History',
         'Generalcoment',
+        'Configuration',
         'Upload',
         'Application',
         'Version',
@@ -126,6 +127,10 @@ class DevicesController  extends AppController {
         //podria devolver el hash de la base de datos de esta forma no habria que descargarla si coincide
         //se pasara la info del usuario en caso de estar autenticado y si ya no es usuario, se perderan el device los privilegios de serlo
         
+
+        //pasar el hash de la BD
+        $config = $this->Configuration->find('first',array());
+        $response["db_hash"] = $config['Configuration']['bd_hash'];
 
 
         echo json_encode($response);
