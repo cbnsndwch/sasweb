@@ -38,7 +38,7 @@
             <!-- Primero devbe ir la imagen de alguna forma -->
             <div class="box span2">
                 <div class="center">
-                    <img width="80px" height="80px" alt="<?php echo h($apk['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($apk['Application']['id']) . '/' . h($apk['Application']['version']) . '/' . h($apk['Application']['id']);?>.png" />
+                    <img width="80px" height="80px" alt="<?php echo h($apk['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($apk['Application']['name']) . '/' . h($apk['Application']['version']) . '/' . h($apk['Application']['name']);?>.png" />
                 </div>
 
             </div>
@@ -51,7 +51,7 @@
                                     Id:
                                 </td>
                                 <td>
-                                    <?php echo h($apk['Application']['id']);?>
+                                    <?php echo h($apk['Application']['name']);?>
                                 </td>
                             </tr>
                             <tr>
@@ -103,13 +103,29 @@
                                     ?>
                                 </td>
                             </tr> 
+
+                            <?php if (isset($apk['User'])): ?>
+                                <tr>
+                                    <td>
+                                        Agregada por:
+                                    </td>
+                                    <td> 
+                                        <strong>
+                                            <?php
+                                                echo h($apk['User']['name']);
+                                            ?>
+                                        </strong>                                       
+                                    </td>
+                                </tr> 
+                            <?php endif; ?>
+
                             <?php if ($apk['Application']['have_data'] == 1): ?>
                                 <tr>
                                     <td>
                                         Datos:
                                     </td>
                                     <td>                                        
-                                        <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadData' . '/' . $apk['Application']['id'];?>/">
+                                        <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadData' . '/' . $apk['Application']['name'];?>/">
                                             <i class="halflings-icon white download-alt"></i>
                                         </a>
 
@@ -159,7 +175,7 @@
                                     <tr>
                                         <td>Activar Datos</td>
                                         <td class="actions">
-                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificateData' . '/' . $apk['Application']['id'];?>/">
+                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificateData' . '/' . $apk['Application']['name'];?>/">
                                                 <i class="halflings-icon white flag"></i>
                                             </a>
                                         </td>
@@ -170,7 +186,7 @@
                                     <tr>
                                         <td>Verificar</td>
                                         <td class="actions">
-                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificate' . '/' . $apk['Application']['id'];?>/">
+                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificate' . '/' . $apk['Application']['name'];?>/">
                                                 <i class="halflings-icon white flag"></i>
                                             </a>
                                         </td>
@@ -180,7 +196,7 @@
                                     <tr>
                                         <td>Recomendar</td>
                                         <td class="actions">
-                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/recommended' . '/' . $apk['Application']['id'];?>/">
+                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/recommended' . '/' . $apk['Application']['name'];?>/">
                                                 <i class="halflings-icon white ok"></i>
                                             </a>
                                         </td>
@@ -191,7 +207,7 @@
                             <tr>
                                 <td>Commentarios</td>
                                 <td class="actions">
-                                    <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/comments/' . $apk['Application']['id'];?>/">
+                                    <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/comments/' . $apk['Application']['name'];?>/">
                                         <?php echo count($apk['Coment']);?>
                                     </a>
                                 </td>
@@ -201,7 +217,7 @@
                             <tr>
                                 <td>Descargar</td>
                                 <td class="actions">
-                                    <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp' . '/' . $apk['Application']['id'];?>/">
+                                    <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp' . '/' . $apk['Application']['name']. '/' . $apk['Application']['version'];?>/">
                                         <i class="halflings-icon white download-alt"></i>
                                     </a>
                                 </td>
@@ -252,7 +268,7 @@
                     <h2>
                         <i class="halflings-icon th"></i>
                         <span class="break"></span>
-                        Versiones
+                        Anteriores
                     </h2>
                     <div class="box-icon">
                         <a class="btn-minimize" href="#">
@@ -266,8 +282,10 @@
                             <tr>
 
                                 <th><?php echo __('Nombre'); ?></th>
-                                <th><?php echo __('Código'); ?></th>
+                                <th><?php echo __('Versión'); ?></th>
+                                <th><?php echo __('Descargas'); ?></th>
                                 <th><?php echo __('SDK'); ?></th>
+                                <!-- <th><?php echo __('Agregada por'); ?></th> -->
                                 <th class="actions"><?php echo __('Acciones'); ?></th>
                             </tr>
                         </thead>
@@ -276,10 +294,15 @@
                             <tr>
                                 <td><?php echo $version['label']; ?></td>
                                 <td><?php echo $version['code']; ?></td>
+                                <td><?php echo $version['downloads']; ?></td>
                                 <td><?php echo $version['sdkversion']; ?></td>
+                                <!-- <td><?php echo $version['User']['name']; ?></td> -->
                                 <td class="actions">
 
-                                    <a class="btn btn-info" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadVersion' . '/' . $version['id'];?>/">
+                                    <a class="btn btn-info" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/detail' . '/' . $version['name'] . '/' . $version['version'];?>/">
+                                        <i class="halflings-icon white th"></i>
+                                    </a>
+                                    <a class="btn btn-info" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp' . '/' . $version['name'] . '/' . $version['version'];?>/">
                                         <i class="halflings-icon white download-alt"></i>
                                     </a>
                                 </td>
@@ -311,12 +334,11 @@
                 <div class="box-content" style="display:none;">
                     <?php foreach ($related as $app): ?>
 
-                        <a href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/detail' . '/' . $app['Application']['id'];?>" class="quick-button metro blue span4" style="padding-top:10px;">                            
-                            <img width="60px" height="60px" alt="<?php echo h($app['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($app['Application']['id']) . '/' . h($app['Application']['version']) . '/' . h($app['Application']['id']);?>.png" />                            
+                        <a href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/detail' . '/' . $app['Application']['name'] . '/' . $app['Application']['version'];?>" class="quick-button metro blue span4" style="padding-top:10px;">                            
+                            <img width="60px" height="60px" alt="<?php echo h($app['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($app['Application']['name']) . '/' . h($app['Application']['version']) . '/' . h($app['Application']['name']);?>.png" />                            
                             <p><?php echo $app['Application']['label']; ?></p>
                             <span class="notification green">
                                 <?php 
-
                                     echo (strlen($app['Application']['code'])>6)?substr($app['Application']['code'], 0,6):$app['Application']['code'];
                                     ?>
                             </span>

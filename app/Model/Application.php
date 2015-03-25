@@ -24,8 +24,8 @@ class Application extends AppModel {
  */
 	public $hasMany = array(
 		'Version' => array(
-			'className' => 'Version',
-			'foreignKey' => 'application_id',
+			'className' => 'Application',
+			'foreignKey' => 'parent_id',
 			'dependent' => false,
 			'conditions' => '',
 			'fields' => '',

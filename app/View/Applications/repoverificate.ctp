@@ -15,7 +15,7 @@
     function search(){
 //        var data = "<?php //echo $this->HTML->url(array('controller'=>'applications', 'action' => 'repo'));?>";
 //        if(data == ""){
-            document.location = "<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/reponews/" + $('#selectCategory').val() + '/' + $('#search').val();
+            document.location = "<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/repoverificate/" + $('#selectCategory').val() + '/' + $('#search').val();
 //        }else{
 //            document.location = data + "/" + $('#search').val();
 //        }
@@ -71,20 +71,20 @@
         <div class="span3 statboxsas blue " <?php echo ($count==0)?"style='margin-left: 2.5641%;'":"";?> ondesktop="span3" ontablet="span6">
             <div class="title"> <?php echo h($apk['Application']['label']);?></div>
             <div class="avatar">
-                <a href="<?php echo $this->Html->url(array('controller' => 'Applications', 'action' => 'detail', $apk['Application']['id']))?>">
-                        <img width="70px" height="70px" style="width:70px;height:70px;" alt="<?php echo h($apk['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($apk['Application']['id']) . '/' . h($apk['Application']['version']) . '/' . h($apk['Application']['id']);?>.png" />
+                <a href="<?php echo $this->Html->url(array('controller' => 'Applications', 'action' => 'detail', $apk['Application']['name']))?>">
+                        <img width="70px" height="70px" style="width:70px;height:70px;" alt="<?php echo h($apk['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($apk['Application']['name']) . '/' . h($apk['Application']['version']) . '/' . h($apk['Application']['name']);?>.png" />
                     </a>
             </div>
             <div class="number">
                 <?php echo h($apk['Application']['downloads']);?>
 
-                <a class="arrow" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp/' . $apk['Application']['id'];?>/">
+                <a class="arrow" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadApp/' . $apk['Application']['name'];?>/">
                     <i class="icon-arrow-down"></i>
                 </a>
             </div>
             <div class="title2">descargas</div>
             <div class="footer">
-                <a href="<?php echo $this->Html->url(array('controller' => 'Applications', 'action' => 'detail', $apk['Application']['id']))?>">    Detalles
+                <a href="<?php echo $this->Html->url(array('controller' => 'Applications', 'action' => 'detail', $apk['Application']['name']))?>">    Detalles
                 </a>
             </div>
         </div>

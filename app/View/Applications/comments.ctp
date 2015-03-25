@@ -13,7 +13,7 @@
 
 				<li class="<?php echo ($count % 2 == 0)?"left":"right";?>">
 				<!-- Aqui poner la imagen del user que lo escribio si es que estaba registrado sino no poner la de la app -->
-					<img class="avatar" width="40px" height="40px" alt="<?php echo h($apk['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($apk['Application']['id']) . '/' . h($apk['Application']['version']) . '/' . h($apk['Application']['id']);?>.png" />
+					<img class="avatar" width="40px" height="40px" alt="<?php echo h($apk['Application']['label']);?>" src="<?php echo $_SERVER['CONTEXT_PREFIX'];?>/pool/<?php echo h($apk['Application']['name']) . '/' . h($apk['Application']['version']) . '/' . h($apk['Application']['name']);?>.png" />
 					<span class="message"><span class="arrow"></span>
 						<span class="from"><strong>
 						<?php
@@ -55,7 +55,7 @@
 		<div class="chat-form">
 			<!-- <input type="text" value="wqwer" /> -->
 			<textarea id="messagearea"></textarea>			
-			<button class="btn btn-info" onclick="addComment('<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/addcomment/<?=$apk['Application']['id']?>');">Enviar comentario</button>
+			<button class="btn btn-info" onclick="addComment('<?php echo $_SERVER['CONTEXT_PREFIX'];?>/applications/addcomment/<?=$apk['Application']['name']?>');">Enviar comentario</button>
 		</div>	
 		<?php //endif; ?>
 

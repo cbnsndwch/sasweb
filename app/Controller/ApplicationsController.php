@@ -9,7 +9,7 @@ App::uses('AppController', 'Controller');
  */
 class ApplicationsController extends AppController {
 
-    var $uses = array('Application', 'Version', 'Apk', 'Generalcoment', 'History', 'Category','Configuration', 'Coment');
+    var $uses = array('Application', 'Generalcoment', 'History', 'Category','Configuration', 'Coment');
 /**
  * Components
  *
@@ -69,10 +69,11 @@ class ApplicationsController extends AppController {
 	}
 
     public function verificate($id = null){
-        if (!$this->Application->exists($id)) {
+        $file = $this->Application->find('first',array('conditions'=>array('Application.name'=>$id)));
+        if (!isset($file['Application'])) {
             $this->redirect(array('action' => 'detail',$id));
-        } else{
-            $options = array('conditions' => array('Application.id' => $id));
+        }else{
+            $options = array('conditions' => array('Application.name' => $id));
             $app = $this->Application->find('first', $options);
             $app['Application']['verificate'] = 1;
             //Aqui se puede agregar tambien quien lo verifico
@@ -84,15 +85,16 @@ class ApplicationsController extends AppController {
     }
 
      public function recommended($id = null){
-        if (!$this->Application->exists($id)) {
+        $file = $this->Application->find('first',array('conditions'=>array('Application.name'=>$id)));
+        if (!isset($file['Application'])) {
             $this->redirect(array('action' => 'detail',$id));
         } else{
-            $options = array('conditions' => array('Application.id' => $id));
+            $options = array('conditions' => array('Application.name' => $id));
             $app = $this->Application->find('first', $options);
             $app['Application']['recommended'] = 1;
             //Aqui se puede agregar tambien quien lo verifico
             if($this->Application->save($app)){
-                $this->Session->setFlash('Application verificada.');
+                $this->Session->setFlash('Application recomendada.');
                 $this->redirect(array('action' => 'detail',$id));
             }            
         }
@@ -100,10 +102,11 @@ class ApplicationsController extends AppController {
 
     public function comments($id = null){
         $this->set('title_for_layout',' Comentarios');
-        if (!$this->Application->exists($id)) {
+        $file = $this->Application->find('first',array('conditions'=>array('Application.name'=>$id)));
+        if (!isset($file['Application'])) {
             throw new NotFoundException(__('Invalid apk'));
         }      
-        $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $id));
+        $options = array('conditions' => array('Application.name' => $id));
         $this->Application->recursive = 2;
         $apk = $this->Application->find('first', $options);   
         //var_dump($apk);
@@ -111,14 +114,14 @@ class ApplicationsController extends AppController {
     }
 
     public function addcomment($id = null){
-        if (!$this->Application->exists($id)) {
+        $file = $this->Application->find('first',array('conditions'=>array('Application.name'=>$id)));
+        if (!isset($file['Application'])) {
             $this->redirect(array('action' => 'comments',$id));
         } else{
             $coment = $_POST['coment'];
-
             $insert = array(
                 'Coment' => array(
-                        'applications_id' => $id,
+                        'applications_id' => $file['Application']['id'],
                         'ip' => $this->request->clientIp(),
                         'coment' => $coment,
                         'visible' => 1
@@ -180,22 +183,20 @@ class ApplicationsController extends AppController {
 
 
     public function repo($cat = -1, $search = null) {
-        $title= "sssss";
         $this->set('title_for_layout','Repositorio de aplicaciones');
         $limit = 6;
         $settings =array(
             'limit'=>$limit ,
+            'conditions' => array('Application.parent_id is null'),
             'order' => array(
                 'Application.label' => 'asc'
             ));
         if(isset($search))
         {           
-            $settings['conditions'] = array(
-                    'OR' => array(
-                        'Application.id LIKE' => '%' . $search . '%',
+            $settings['conditions']['OR'] = array(
+                        'Application.name LIKE' => '%' . $search . '%',
                         'Application.label LIKE' => '%' . $search . '%'
-                    )
-                );           
+                        );           
         }
         if($cat != -1){
              $settings['conditions']['Application.categories_id'] = $cat;
@@ -226,11 +227,12 @@ class ApplicationsController extends AppController {
         $dayToNew = $config["Configuration"]['days_to_new'];
         $date = date_create('now');
         date_sub($date, date_interval_create_from_date_string($dayToNew . ' days'));
-        // var_dump($date->format('Y-m-d H:i:s'));
-        //  var_dump($date);
+        
+
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array(
+                'Application.parent_id is null',
                 'Application.created >= "' . $date->format('Y-m-d H:i:s') . '"' ,
                 ),
             'order' => array(
@@ -239,9 +241,9 @@ class ApplicationsController extends AppController {
         if(isset($search))
         {           
             $settings['conditions']['OR'] = array(
-                        'Application.id LIKE' => '%' . $search . '%',
+                        'Application.name LIKE' => '%' . $search . '%',
                         'Application.label LIKE' => '%' . $search . '%'
-                    );           
+                        );           
         }
         if($cat != -1){
              $settings['conditions']['Application.categories_id'] = $cat;
@@ -266,13 +268,11 @@ class ApplicationsController extends AppController {
         $title= "sssss";
         $this->set('title_for_layout','Aplicaciones recomendadas');
         $limit = 6;
-        //pido la configuracion
-        $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
-
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array(
-                'Application.recommended' => 1,
+                'Application.parent_id is null',
+                'Application.recommended' => 1
                 ),
             'order' => array(
                 'Application.label' => 'asc'
@@ -280,9 +280,9 @@ class ApplicationsController extends AppController {
         if(isset($search))
         {           
             $settings['conditions']['OR'] = array(
-                        'Application.id LIKE' => '%' . $search . '%',
+                        'Application.name LIKE' => '%' . $search . '%',
                         'Application.label LIKE' => '%' . $search . '%'
-                    );           
+                        );           
         }
         if($cat != -1){
              $settings['conditions']['Application.categories_id'] = $cat;
@@ -307,12 +307,10 @@ class ApplicationsController extends AppController {
         $title= "sssss";
         $this->set('title_for_layout','Aplicaciones recomendadas');
         $limit = 6;
-        //pido la configuracion
-        $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
-
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array(
+                'Application.parent_id is null',
                 'Application.verificate' => 1,
                 ),
             'order' => array(
@@ -321,10 +319,10 @@ class ApplicationsController extends AppController {
         if(isset($search))
         {           
             $settings['conditions']['OR'] = array(
-                        'Application.id LIKE' => '%' . $search . '%',
+                        'Application.name LIKE' => '%' . $search . '%',
                         'Application.label LIKE' => '%' . $search . '%'
-                    );           
-        }
+                        );           
+        }       
         if($cat != -1){
              $settings['conditions']['Application.categories_id'] = $cat;
         }
@@ -345,20 +343,20 @@ class ApplicationsController extends AppController {
     }
 
     public function downloadData($id = null){
-        if (!$this->Application->exists($id)) {
+        $file = $this->Application->find('first',array('conditions'=>array('Application.name'=>$id)));
+        if (!isset($file['Application'])) {
             throw new NotFoundException(__('Invalid apk'));
-        }
-        $label = $id;
+        }        
         $this->layout = null;
         $this->viewClass = 'Media';
-        $file = $this->Application->find('first',array('conditions'=>array('Application.id'=>$id)));
         $label = $file['Application']['label'];
+        $name =  $file['Application']['name'];
         $params = array(
             'id'        => '',
             // 'name'      => $label ,
             // 'extension' => 'zip',
             'mimeType'  => 'application/zip',
-            'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.zip',
+            'path'  =>   'webroot/pool/'. $name . '/'. $file['Application']['version'] . '/' . $name  .'.zip',
             'download'=>true
         );
         $this->response->type('application/zip');
@@ -366,9 +364,11 @@ class ApplicationsController extends AppController {
     }
 
     public function verificateData($id = null){
-        if (!$this->Application->exists($id)) {
+        $file = $this->Application->find('first',array('conditions'=>array('Application.name'=>$id)));
+        if (!isset($file['Application'])) {
             throw new NotFoundException(__('Invalid apk'));
-        }
+        }  
+
         $strDest = $_SERVER['CONTEXT_DOCUMENT_ROOT'] .'pool' . DS;
         $file = $this->Application->find('first',array('conditions'=>array('Application.id'=>$id)));
         $strDest .= $file['Application']['id'] . DS . $file['Application']['version'] . DS . $file['Application']['id'] . '.zip';        
@@ -382,100 +382,87 @@ class ApplicationsController extends AppController {
         return $this->redirect(array('action' => 'detail', $id));
     }
 
-    public function downloadApp($id = null){
-        if (!$this->Application->exists($id)) {
-            throw new NotFoundException(__('Invalid apk'));
+    public function downloadApp($id = null, $version = null){
+
+        $options = array(
+            'conditions'=>array('Application.name' => $id)
+            );
+        if(isset($version)){//es que quiero descargar una version en especifico
+            $options['conditions']['Application.version'] = $version;
+        }else{//es que quiero descargar la mas reciente
+            $options['order']['Application.version'] = 'desc';
         }
-        $label = $id;
+
+        $file = $this->Application->find('first',$options);
+        if (!isset($file['Application'])) {
+            throw new NotFoundException(__('Invalid apk'));
+        }        
         $this->layout = null;
         $this->viewClass = 'Media';
-        $file = $this->Application->find('first',array('conditions'=>array('Application.id'=>$id)));
+        $label = $file['Application']['label'];
         $down = $file['Application']['downloads'] + 1;
         //Salvar el apk con el aumento de el campo downloads para indicar que hubo un cambio mas
-        $this->Application->id = $id;
+        $this->Application->id = $file['Application']['id'];
         $this->Application->saveField('downloads', $down);
 
         if(isset($this->request->data['client']))
             $client = $this->request->data['client'];
         else{
-            $client = 'directDownload';
+            $client = 'WebAccess';
             //throw new NotFoundException(__('App client obsolete'));
             //echo "error";
             //die();
         }
         $dataHistory = array('History' => array(
-            'name' =>  $file['Application']['id'] .'-'. $file['Application']['code'],
+            'name' =>  $file['Application']['name'] ,
+            'version' => $file['Application']['code'],
             'ip' => $this->request->clientIp(),
             'client' => $client
         ));
         $this->History->save($dataHistory);
         $label = $file['Application']['label'];
+        $name =  $file['Application']['name'];
         $params = array(
             'id'        => '',
             // 'name'      => $label . '.apk',
             // 'extension' => 'apk',
             'mimeType'  => 'application/vnd.android.package-archive',
-            'path'  =>   'webroot/pool/'. $id . '/'. $file['Application']['version'] . '/' . $id  .'.apk',
+            'path'  =>   'webroot/pool/'. $name . '/'. $file['Application']['version'] . '/' . $name  .'.apk',
             'download'=>true
         );
         $this->response->type('application/vnd.android.package-archive');
         $this->set($params);
     }
 
-    public function downloadVersion($id = null){
-        if (!$this->Version->exists($id)) {
-            throw new NotFoundException(__('Invalid apk'));
-        }
-        $label = $id;
-        $this->layout = null;
-        $this->viewClass = 'Media';
-        $file = $this->Version->find('first',array('conditions'=>array('Version.id'=>$id)));
-        $down = $file['Version']['downloads'] + 1;
-        //Salvar el apk con el aumento de el campo downloads para indicar que hubo un cambio mas
-        $this->Version->id = $id;
-        $this->Version->saveField('downloads', $down);
-        $dataHistory = array('History' => array(
-            'name' =>  $file['Version']['application_id'],
-            'ip' => $this->request->clientIp(),
-            'client' => "Web - (Version)"
-        ));
-        $this->History->save($dataHistory);
-        $label = $file['Version']['label'];
-        $params = array(
-            'id'        => '',
-            // 'name'      => $label ,
-            // 'extension' => 'apk',
-            'mimeType'  => 'application/vnd.android.package-archive',
-            'path'  =>   'webroot/pool/'. $file['Version']['application_id'] . '/'. $file['Version']['version'] . '/' . $file['Version']['application_id']  .'.apk',
-            'download'=>true
-        );
-        $this->response->type('application/vnd.android.package-archive');
-        $this->set($params);
-    }
-
-    public function detail($id = null) {
-
+    
+    public function detail($id = null, $version = null) {
         $this->set('title_for_layout','Detalles');
-        if (!$this->Application->exists($id)) {
-            throw new NotFoundException(__('Invalid apk'));
-        }
-        
 
-        $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $id));
-        $apk = $this->Application->find('first', $options);
+        $options = array(
+            'conditions'=>array('Application.name' => $id)
+            );
+        if(isset($version)){//es que quiero descargar una version en especifico
+            $options['conditions']['Application.version'] = $version;
+        }else{//es que quiero descargar la mas reciente
+            $options['order']['Application.version'] = 'desc';
+        }
+        $apk = $this->Application->find('first',$options);
+        if (!isset($apk['Application'])) {
+            throw new NotFoundException(__('Invalid apk'));
+        }            
         //buscar las aplicaciones relacionadas
         if($apk['Category']['id'] !== 1){
-
             $count = $this->Application->find('count', array('conditions' => array(
                     'Application.categories_id' => $apk['Category']['id'],
+                    'Application.parent_id is null',
                     'Application.id != ' . "'" .$apk['Application']['id'] . "'"
                 )));
-
             $result = rand(0,$count - 3);   
             //aqui cojo 6 aplicaciones que sean de la miama categoria
             $related = $this->Application->find('all', array(
                 'conditions' => array(
                     'Application.categories_id' => $apk['Category']['id'],
+                    'Application.parent_id is null',
                     'Application.id != ' . "'" .$apk['Application']['id'] . "'"
                 ), 
                 'limit' => 3,
