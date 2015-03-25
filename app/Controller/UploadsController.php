@@ -108,18 +108,21 @@ public function isAuthorized($user) {
 
         //construyo la direccion destino
         if(!is_dir($strDest)){
-             mkdir($strDest);
-                chgrp($strDest, "www-data");
+            mkdir($strDest);
+            chgrp($strDest, "www-data");
+            chmod($strDest, 0777);
         }
         $strDest .= $up['Upload']['name'] . '/';
         if(!is_dir($strDest)){
             mkdir($strDest);
-                chgrp($strDest, "www-data");
+            chgrp($strDest, "www-data");
+            chmod($strDest, 0777);
         }
         $strDest .= $up['Upload']['version'] . '/';
         if(!is_dir($strDest)){
             mkdir($strDest);
-                chgrp($strDest, "www-data");
+            chgrp($strDest, "www-data");
+            chmod($strDest, 0777);
         }
         $strDest .= $up['Upload']['name'];
         if(!file_exists($strDest . '.apk')){
@@ -131,6 +134,11 @@ public function isAuthorized($user) {
             if(!copy( $strSource . '.apk', $strDest . '.apk' ) ){
                 $moveFail = true;
             }
+            //establesco los permisos para los archivos
+            chgrp($strDest. '.png', "www-data");
+            chmod($strDest. '.png', 0777);
+            chgrp($strDest. '.apk', "www-data");
+            chmod($strDest. '.apk', 0777);
             //borro los ficheros
             unlink($strSource . '.apk');
             unlink($strSource . '.png');
@@ -140,158 +148,71 @@ public function isAuthorized($user) {
             rmdir($folderVersion);
             // $folderId = $strdel . $up['Upload']['name'] . '/';
             // rmdir($folderId);
-            if(!$moveFail){
-                
+            if(!$moveFail){                
                 //ver si este id esta ya en aplication
                 //recoger el de aplicacion
-                $options = array('conditions' => array('Application.' . $this->Application->primaryKey => $up['Upload']['name']));
+                $options = array('conditions' => array(
+                    'Application.name' => $up['Upload']['name'],
+                    'Application.parent_id is null'
+                    )
+                );
                 $app =  $this->Application->find('first', $options);
-                //si el id esta en aplicacion es que ya hay una version en el sistema por lo que procedo
-                //a ver los codigos, si no entonces la inserto en application
-                if(!isset($app['Application']['id'])){//Si no esta en appplication la inserto
-                    //preparo el array
-                    $toINsert = array();
-                    $toINsert['Application'] = array();
-                    $toINsert['Application']['id'] = $up['Upload']['name'];
-                    $toINsert['Application']['label'] = $up['Upload']['label'];
-                    $toINsert['Application']['version'] = $up['Upload']['version'];
-                    $toINsert['Application']['code'] = $up['Upload']['code'];
-                    $toINsert['Application']['categories_id'] = $up['Upload']['categories_id'];
-                    $toINsert['Application']['description'] = $up['Upload']['description'];//esto esta en prueba por ahora pasare null
-                    $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
-                    $toINsert['Application']['downloads'] = 0;
-                    $toINsert['Application']['rating'] = 0;
-                    $toINsert['Application']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
-                    $toINsert['Application']['size'] = $up['Upload']['size'];
-                    $toINsert['Application']['developer'] = $up['Upload']['developer'];
-                    $toINsert['Application']['have_data'] = 0;
-                    //lo inserto en app sin problema alguna ya que no esta
-                    $this->Application->create();
-                    if ($this->Application->save($toINsert)) {
-                        //luego de insertado lo elimino de upload
-                        $this->Upload->id = $id;
-                        if ($this->Upload->delete()) {
-                            $this->BdHelper->setBDupdatable();
-                            return (__('La nueva aplicación ha sido agregada con éxito.'));
-                        } else {
-                            $ok = false;
-                            return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
-                        }
-                    }else{
-                        $ok = false;
-                        return (__('La nueva aplicación no ha sido agregada.'));
-                    }
 
-                }else{//si esta en app, verifico los codigos y si es mayor actualizo sino voy para versiones
-                    if($up['Upload']['version'] > $app['Application']['version']){
-                        //si la version a insertar es mayor que la que esta, actualizo application con la nueva
-                        //he inserto la de apliation en version, sin verificar nada ya que no deveria estar
+                $toINsert = array();
+                $toINsert['Application'] = array();
+                $toINsert['Application']['name'] = $up['Upload']['name'];
+                $toINsert['Application']['label'] = $up['Upload']['label'];
+                $toINsert['Application']['version'] = $up['Upload']['version'];
+                $toINsert['Application']['code'] = $up['Upload']['code'];
+                $toINsert['Application']['categories_id'] = $up['Upload']['categories_id'];
+                $toINsert['Application']['description'] = $up['Upload']['description'];//esto esta en prueba por ahora pasare null
+                $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
+                $toINsert['Application']['downloads'] = 0;
+                $toINsert['Application']['rating'] = 0;
+                $toINsert['Application']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
+                $toINsert['Application']['size'] = $up['Upload']['size'];
+                $toINsert['Application']['developer'] = $up['Upload']['developer'];
+                $toINsert['Application']['have_data'] = 0;
 
-                        //para poner en versiones
-                        $toINsert = array();
-                        $toINsert['Version'] = array();
-                        $toINsert['Version']['application_id'] = $app['Application']['id'];
-                        $toINsert['Version']['label'] = $app['Application']['label'];
-                        $toINsert['Version']['version'] = $app['Application']['version'];
-                        $toINsert['Version']['code'] = $app['Application']['code'];
-                        $toINsert['Version']['categories_id'] = $app['Application']['categories_id'];
-                        $toINsert['Version']['description'] = $app['Application']['description'];//esto esta en prueba por ahora pasare null
-                        $toINsert['Version']['sdkversion'] = $app['Application']['sdkversion'];// esto esta en veremos
-                        $toINsert['Version']['downloads'] = $app['Application']['downloads'];
-                        $toINsert['Version']['rating'] = $app['Application']['rating'];
-                        $toINsert['Version']['developer'] = $app['Application']['developer'];
-                        $toINsert['Version']['verificate'] = ($app['Application']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
-                        $toINsert['Version']['size'] = $app['Application']['size'];
-                        $toINsert['Version']['have_data'] = $app['Application']['have_data'];
-                        $this->Version->create();
-                        if ($this->Version->save($toINsert)) {
-                            //si se inserto en versiones ok
-                            $toINsert['Application'] = array();
-                            $toINsert['Application']['id'] = $up['Upload']['name'];
-                            $toINsert['Application']['label'] = $up['Upload']['label'];
-                            $toINsert['Application']['version'] = $up['Upload']['version'];
-                            $toINsert['Application']['code'] = $up['Upload']['code'];
-                            $toINsert['Application']['categories_id'] = $up['Upload']['categories_id'];
-                            $toINsert['Application']['description'] = $up['Upload']['description'];//esto esta en prueba por ahora pasare null
-                            $toINsert['Application']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
-                            $toINsert['Application']['downloads'] = 0;
-                            $toINsert['Application']['rating'] = 0;
-                            $toINsert['Application']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
-                            $toINsert['Application']['size'] = $up['Upload']['size'];
-                            $toINsert['Application']['developer'] = $up['Upload']['developer'];
-                            $toINsert['Application']['have_data'] = 0;
-                            $this->Application->create();
-                            if ($this->Application->save($toINsert)) {
-                                //luego de insertado lo elimino de upload
-                                $this->Upload->id = $id;
-                                if ($this->Upload->delete()) {
-                                    $this->BdHelper->setBDupdatable();
-                                    return (__('La nueva aplicación ha sido agregada con éxito.'));
-                                } else {
-                                    $ok = false;
-                                    return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                
+                $this->Application->create();                
+                if ($this->Application->save($toINsert)) {
+                    $idToIns = $this->Application->id;
+                    if(isset($app['Application']['id'])){
+                        // si la version del insertado es mayor que el anterior actualizo el anterior
+                        if($up['Upload']['version'] > $app['Application']['version']){
+                            $this->Application->id = $app['Application']['id'];
+                            $this->Application->saveField('parent_id', $idToIns);
+                            //Cambio todos los hijos de esta para el nuevo padre
+                            if(isset($app['Version'])){
+                                foreach ($app['Version'] as $v) {
+                                    echo $v['id'];
+                                    $this->Application->id = $v['id'];
+                                    $this->Application->saveField('parent_id', $idToIns);
                                 }
-                            }else{
-                                $ok = false;
-                                return (__('La nueva aplicación no ha sido agregada.'));
                             }
                         }else{
-                            $ok = false;
-                            return (__('La nueva aplicación no ha sido agregada.'));
+                            $this->Application->id = $idToIns;
+                            $this->Application->saveField('parent_id', $app['Application']['id']);
                         }
-
-
-                    }else{
-                        //Si la version a insertar es menor entonces directamente, veo si existe en version
-                        // si no existe la tupla entonces la inserto, no deveria ocurrie el caso de que exista
-                        // ya que entonces en teoria el user no podria haberla subido.
-
-                        //verificar la existencia en versiones
-                        $options = array('conditions' => array(
-                            'Version.application_id' => $up['Upload']['name'],
-                            'Version.version' => $up['Upload']['version']
-                        ));
-                        $ver =  $this->Version->find('first', $options);
-                        if(!isset($ver['Application']['application_id'])){//si no esta que es lo que deveria pasar, entonces la inserto
-                            $toINsert = array();
-                            $toINsert['Version'] = array();
-                            $toINsert['Version']['application_id'] = $up['Upload']['name'];
-                            $toINsert['Version']['label'] = $up['Upload']['label'];
-                            $toINsert['Version']['version'] = $up['Upload']['version'];
-                            $toINsert['Version']['code'] = $up['Upload']['code'];
-                            $toINsert['Version']['category'] = $up['Upload']['categories_id'];
-                            $toINsert['Version']['description'] = $up['Upload']['description'];//esto esta en prueba por ahora pasare null
-                            $toINsert['Version']['sdkversion'] = $up['Upload']['sdkversion'];// esto esta en veremos
-                            $toINsert['Version']['downloads'] = 0;
-                            $toINsert['Version']['rating'] = 0;
-                            $toINsert['Version']['size'] = $up['Upload']['size'];
-                            $toINsert['Application']['developer'] = $up['Upload']['developer'];
-                            $toINsert['Version']['have_data'] = 0;
-                            $toINsert['Version']['verificate'] = ($up['Upload']['categories_id'] == 1)?0:1;//Si yo soy el que estoy agregandola es que yo la verifique
-                            $this->Version->create();
-                            if ($this->Version->save($toINsert)) {
-                                //luego de insertado lo elimino de upload
-                                $this->Upload->id = $id;
-                                if ($this->Upload->delete()) {
-                                    $this->BdHelper->setBDupdatable();
-                                    $this->Session->setFlash(__('La nueva aplicación ha sido agregada con éxito.'));
-                                } else {
-                                    $ok = false;
-                                    return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
-                                }
-                            }else{
-                                $ok = false;
-                                return (__('La nueva aplicación no ha sido agregada.'));
-                            }
-                        }
-                    }                   
+                    }
+                    //luego de insertado lo elimino de upload
+                    $this->Upload->id = $id;
+                    if ($this->Upload->delete()) {
+                        return (__('La nueva aplicación ha sido agregada con éxito.'));
+                    } else {
+                        $ok = false;
+                        return (__('No se pudo eliminar el elemento de la tabla upload. Realice la eliminacion directamente.'));
+                    }
+                }else{
+                    $ok = false;
+                    return (__('La nueva aplicación no ha sido agregada.'));
                 }
             }else{
                 //error al copiar loe elemntos
                 $ok = false;
                 return (__('No ha podido ser copiada la aplicación a su carpeta destino, verifique y los permisos de escritura y vuelva a intentarlo.'));
             }
-
         }else{
             //si el apk ya esta es que este elemento no hay que moverlo,
             //se asume que todo esta ok por lo que solo se elimina el elemento de upload
@@ -322,9 +243,8 @@ public function isAuthorized($user) {
             //Comprobar su ese apk para esa version ya esta arriba, si lo esta entonces no se sube
             $upl = $this->Upload->find('first',array('conditions'=>array('Upload.name'=>$info['id'], 'Upload.code'=>$info['code'])));
             //Comprobar que tampoco esta ni en application ni en version
-            $app = $this->Application->find('first',array('conditions'=>array('Application.id'=>$info['id'], 'Application.code'=>$info['code'])));
-            $vers = $this->Version->find('first',array('conditions'=>array('Version.id'=>$info['id'], 'Version.code'=>$info['code'])));
-            if(!empty($upl) || !empty($app) || !empty($vers)){
+            $app = $this->Application->find('first',array('conditions'=>array('Application.name'=>$info['id'], 'Application.version'=>$info['version'])));
+            if(!empty($upl) || !empty($app)){
                 $this->Session->setFlash("La aplicacion " . $name . " con la version " . $info["code"] . " ya esta disponible en el servidor. Gracias por compartir con SAS.");
             }else {
                 if ($this->censuredApk($info)) {
