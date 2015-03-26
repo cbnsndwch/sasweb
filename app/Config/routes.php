@@ -25,6 +25,11 @@
  * to use (in this case, /app/View/Pages/home.ctp)...
  */
 	Router::connect('/', array('controller' => 'applications', 'action' => 'repo', '-1'));
+
+
+	// Router::connect('/sas/ajax_multi_upload/:controller', array('plugin' => 'ajax_multi_upload'));
+	// Router::connect('/sas/ajax_multi_upload/:controller/:action/*', array('plugin' => 'ajax_multi_upload'));
+
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */

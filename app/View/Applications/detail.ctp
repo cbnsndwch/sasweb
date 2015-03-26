@@ -118,21 +118,7 @@
                                     </td>
                                 </tr> 
                             <?php endif; ?>
-
-                            <?php if ($apk['Application']['have_data'] == 1): ?>
-                                <tr>
-                                    <td>
-                                        Datos:
-                                    </td>
-                                    <td>                                        
-                                        <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/downloadData' . '/' . $apk['Application']['name'];?>/">
-                                            <i class="halflings-icon white download-alt"></i>
-                                        </a>
-
-                                    </td>
-                                </tr> 
-                            <?php endif; ?>
-
+                         
                             <?php //if ($apk['Application']['verificate'] == 1): ?>
                                 <tr>
                                     <td>
@@ -171,16 +157,16 @@
                             <!-- Zona de Manager y admins por ahora solo admins-->
                              <?php if ($isadmin): ?>
 
-                                <?php if ($apk['Application']['have_data'] == 0): ?>
-                                    <tr>
-                                        <td>Activar Datos</td>
-                                        <td class="actions">
-                                            <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/applications/verificateData' . '/' . $apk['Application']['name'];?>/">
-                                                <i class="halflings-icon white flag"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
+                                
+                                <tr>
+                                    <td>Manejar Datos</td>
+                                    <td class="actions">
+                                        <a class="btn btn-info small" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/data/manage' . '/' . $apk['Application']['id'];?>/">
+                                            <i class="halflings-icon white flag"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                
 
                                 <?php if ($apk['Application']['verificate'] == 0): ?>
                                     <tr>
@@ -353,6 +339,51 @@
             </div>
             <?php endif; ?>
             <!-- Aqui terminan las versiones -->
+
+            <!-- Aqui comienzan los datos -->
+        <?php if (!empty($apk['Data'])): ?>
+                <hr/>
+            <div class="row-fluid" >
+                <div class="box-header">
+                    <h2>
+                        <i class="halflings-icon th"></i>
+                        <span class="break"></span>
+                        Datos asociados
+                    </h2>
+                    <div class="box-icon">
+                        <a class="btn-minimize" href="#">
+                            <i class="halflings-icon chevron-down"></i>
+                        </a>
+                    </div>
+                </div>               
+                <div class="box-content" style="display:none;">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+
+                                <th><?php echo __('Nombre'); ?></th>
+                                <th><?php echo __('Tipo'); ?></th>
+                                <th class="actions"><?php echo __('Acciones'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($apk['Data'] as $data): ?>
+                            <tr>
+                                <td><?php echo $data['name']; ?></td>
+                                <td><?php echo $data['type']; ?></td>
+                                <td class="actions">
+                                    <a class="btn btn-info" href="<?php echo $_SERVER['CONTEXT_PREFIX'] . '/data/downloadData' . '/' . $data['id'];?>/">
+                                        <i class="halflings-icon white download-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <?php endif; ?>
+            <!-- Aqui terminadn los datos -->
 
         </div>
 

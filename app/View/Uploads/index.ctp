@@ -45,9 +45,9 @@
 		<td class="actions">
             <?php echo $this->Html->link(__('Agregar'), array('action' => 'update', $upload['Upload']['id']), array('class' => 'btn')); ?>
             <?php echo $this->Html->link(__('Descargar'), array('action' => 'view', $upload['Upload']['id']), array('class' => 'btn')); ?>
-			<?php echo $this->Html->link(__('Ver'), array('action' => 'view', $upload['Upload']['id']), array('class' => 'btn')); ?>
-			<?php echo $this->Html->link(__('Editar'), array('action' => 'edit', $upload['Upload']['id']), array('class' => 'btn')); ?>
-			<?php echo $this->Form->postLink(__('Eliminar'), array('action' => 'delete', $upload['Upload']['id']), array('class' => 'btn'), __('Are you sure you want to delete # %s?', $upload['Upload']['id'])); ?>
+			<?php //echo $this->Html->link(__('Ver'), array('action' => 'view', $upload['Upload']['id']), array('class' => 'btn')); ?>
+			<?php //echo $this->Html->link(__('Editar'), array('action' => 'edit', $upload['Upload']['id']), array('class' => 'btn')); ?>
+			<?php //echo $this->Form->postLink(__('Eliminar'), array('action' => 'delete', $upload['Upload']['id']), array('class' => 'btn'), __('Are you sure you want to delete # %s?', $upload['Upload']['id'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

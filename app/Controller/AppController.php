@@ -33,6 +33,9 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {
 
     public $uses = array('User', 'Application', 'Configuration');
+    
+    var $helpers = array('AjaxMultiUpload.Upload');
+    
     //Descomentar esta linea cuando se monte el proyecto en produccion
     //public $layout = 'production';
 

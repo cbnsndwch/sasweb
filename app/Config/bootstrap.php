@@ -69,7 +69,11 @@ Cache::config('default', array('engine' => 'File'));
  * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
  *
  */
-CakePlugin::load('DebugKit');
+//CakePlugin::load('DebugKit');
+CakePlugin::load('AjaxMultiUpload');
+CakePlugin::load('AjaxUploadFiles');
+CakePlugin::load('Utility', array('bootstrap' => true, 'routes' => true));
+CakePlugin::load('Admin', array('bootstrap' => true, 'routes' => true));
 CakePlugin::loadAll(); // Loads all plugins at once
 
 /**
