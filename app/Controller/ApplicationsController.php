@@ -15,7 +15,7 @@ class ApplicationsController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator', 'Session','DebugKit.Toolbar');
+	public $components = array('Paginator', 'Session');//,'DebugKit.Toolbar');
 
     public function beforeFilter(){
         parent::beforeFilter();
@@ -34,7 +34,8 @@ class ApplicationsController extends AppController {
             'detail',
             'downloadApp',
             'downloadData',
-            'downloadVersion'
+            'downloadVersion',
+            'repodownloads'
         );
         $this->Paginator->settings=array(
             'limit'=>6,
@@ -190,6 +191,41 @@ class ApplicationsController extends AppController {
             'conditions' => array('Application.parent_id is null'),
             'order' => array(
                 'Application.label' => 'asc'
+            ));
+        if(isset($search))
+        {           
+            $settings['conditions']['OR'] = array(
+                        'Application.name LIKE' => '%' . $search . '%',
+                        'Application.label LIKE' => '%' . $search . '%'
+                        );           
+        }
+        if($cat != -1){
+             $settings['conditions']['Application.categories_id'] = $cat;
+        }
+        if(!$this->Auth->loggedIn()){ //por ahora no hay restrincciones de este tipo todas las app tienen 0 pero por si acaso
+            $settings['conditions']['Application.only_logged'] = 0;
+        }
+        $this->Paginator->settings=$settings;
+        //poner las categorias para el menu
+        $categorys =  $this->Category->find('all', array());
+        // var_dump($categorys);
+        $this->set('category',$categorys);
+        $this->set('catsel',$cat);
+
+        //$this->layout = 'frontend';
+        $this->Application->recursive = 0;
+        $this->set('apks', $this->Paginator->paginate());
+        $this->set('search',$search);
+    }
+
+    public function repodownloads($cat = -1, $search = null) {
+        $this->set('title_for_layout','Ordenadas por descarga');
+        $limit = 12;
+        $settings =array(
+            'limit'=>$limit ,
+            'conditions' => array('Application.parent_id is null'),
+            'order' => array(
+                'Application.downloads' => 'desc'
             ));
         if(isset($search))
         {           
