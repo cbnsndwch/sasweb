@@ -15,7 +15,7 @@ class ApplicationsController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator', 'Session');//,'DebugKit.Toolbar'
+	public $components = array('Paginator', 'Session','DebugKit.Toolbar');
 
     public function beforeFilter(){
         parent::beforeFilter();
@@ -184,7 +184,7 @@ class ApplicationsController extends AppController {
 
     public function repo($cat = -1, $search = null) {
         $this->set('title_for_layout','Repositorio de aplicaciones');
-        $limit = 6;
+        $limit = 12;
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array('Application.parent_id is null'),
@@ -220,7 +220,7 @@ class ApplicationsController extends AppController {
     public function reponews($cat = -1, $search = null) {
         $title= "sssss";
         $this->set('title_for_layout','Aplicaciones nuevas');
-        $limit = 6;
+        $limit = 12;
         //pido la configuracion
         $config = $this->Configuration->find('first', array('conditions' => array('Configuration.id'=> 1)));
         //este es la cantidad de dias pasados que se cogeran para calcular los nuevos, esto debe estar en la tabla de conf o del usuario
@@ -236,7 +236,7 @@ class ApplicationsController extends AppController {
                 'Application.created >= "' . $date->format('Y-m-d H:i:s') . '"' ,
                 ),
             'order' => array(
-                'Application.label' => 'asc'
+                'Application.created' => 'desc'
             ));
         if(isset($search))
         {           
@@ -267,7 +267,7 @@ class ApplicationsController extends AppController {
     public function reporecommended($cat = -1, $search = null) {
         $title= "sssss";
         $this->set('title_for_layout','Aplicaciones recomendadas');
-        $limit = 6;
+        $limit = 12;
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array(
@@ -306,7 +306,7 @@ class ApplicationsController extends AppController {
      public function repoverificate($cat = -1, $search = null) {
         $title= "sssss";
         $this->set('title_for_layout','Aplicaciones recomendadas');
-        $limit = 6;
+        $limit = 12;
         $settings =array(
             'limit'=>$limit ,
             'conditions' => array(
