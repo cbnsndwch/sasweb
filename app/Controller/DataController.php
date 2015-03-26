@@ -19,7 +19,7 @@ class DataController extends AppController {
  */
 	public $components = array('Paginator', 'Session');
 
-	public $helpers = array('Js','AjaxMultiUpload.Upload');
+	public $helpers = array('Js');//,'AjaxMultiUpload.Upload');
 
 
 	public function manage($id=null){		
